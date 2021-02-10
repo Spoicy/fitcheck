@@ -128,6 +128,11 @@ $string['liststudentlastname'] = 'last name';
 $string['listgrade'] = 'Grade';
 $string['listresult'] = 'Result';
 $string['average'] = 'Average';
+$string['testnumbernone'] = 'No tests performed yet';
+$string['testnumber'] = 'Test #{$a}';
+$string['complete'] = 'Status: Complete';
+$string['incomplete'] = 'Status: Incomplete';
+$string['startnewtest'] = 'Start a new test';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

@@ -62,6 +62,11 @@ $classname = optional_param('classname', '', PARAM_TEXT);
 $classgender = optional_param('classgender', -1, PARAM_INT);
 $unassignedstudentid = optional_param('unassignedselect', 0, PARAM_INT);
 $assignedstudentid = optional_param('assignedselect', 0, PARAM_INT);
+if (isset($class->gender)) {
+    $defaultselectgender = $class->gender;
+} else {
+    $defaultselectgender = 0;
+}
 
 // Save class to database.
 if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender != -1 && confirm_sesskey()) {
@@ -70,6 +75,7 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
     if ($class->id == -1) {
         unset($class->id);
         $class->teacherid = $USER->id;
+        $class->testnr = 0;
         $id = $DB->insert_record('local_fitcheck_classes', $class);
         redirect('/local/fitcheck/settings/editclass.php?id=' . $id);
     } else {
@@ -80,13 +86,16 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
 // Add student to class.
 if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_sesskey()) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $unassignedstudentid]);
+    $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results} WHERE userid = ' . $student->id));
     if ($student) {
         $student->classid = $id;
+        $student->offset = $numbertests - $class->testnr;
         $DB->update_record('local_fitcheck_users', $student);
     } else {
         $student = new stdClass();
         $student->classid = $id;
         $student->userid = $unassignedstudentid;
+        $student->offset = 0;
         $DB->insert_record('local_fitcheck_users', $student);
     }
 }
@@ -128,7 +137,7 @@ $classinfoform = html_writer::div(
             html_writer::select([
                 get_string('maleunisex', 'local_fitcheck'),
                 get_string('female', 'local_fitcheck')
-            ], 'classgender', 0, '', ['id' => 'classgender', 'class' => 'form-control', 'required' => '']),
+            ], 'classgender', $defaultselectgender, '', ['id' => 'classgender', 'class' => 'form-control', 'required' => '']),
             'col-md-9 form-inline'), 'form-group row') .
     $teacherdiv .
     html_writer::div(

@@ -31,6 +31,7 @@ $id = required_param('id', PARAM_INT);
 $sort = optional_param('sort', '', PARAM_TEXT);
 $dir = optional_param('dir', '', PARAM_TEXT);
 $view = optional_param('view', 0, PARAM_INT);
+$newtest = optional_param('newtest', false, PARAM_BOOL);
 
 $PAGE->set_url(new moodle_url('/local/fitcheck/classresults.php'));
 $PAGE->set_context(context_system::instance());
@@ -48,6 +49,12 @@ if ($dir == 'asc') {
 
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
+
+if ($newtest) {
+    $class->testnr++;
+    $DB->update_record('local_fitcheck_classes', $class);
+}
+
 if ($view == 0) {
     $selectoptions = html_writer::tag('option', get_string('average', 'local_fitcheck'), ['value' => 'average', 'selected' => '']);
     $currenttest = new stdClass();
@@ -147,12 +154,14 @@ if ($view != 0) {
     $table->head[] = $grade;
 }
 
-$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id FROM {user} u, {local_fitcheck_users} lfu
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset FROM {user} u, {local_fitcheck_users} lfu
     WHERE classid = ' . $id .
     ' AND u.id = lfu.userid');
 
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
+
+$complete = 1;
 
 foreach ($students as $student) {
     $row = array();
@@ -187,6 +196,15 @@ foreach ($students as $student) {
     } else {
 
     }
+    if ($complete) {
+        foreach ($tests as $test) {
+            $testresult = $DB->get_records('local_fitcheck_results',
+                ['userid' => $student->id, 'testid' => $test->id, 'testnr' => $class->testnr + $student->offset]);
+            if (!count($testresult) || $testresult->result == null) {
+                $complete = 0;
+            }
+        }
+    }
     $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
         $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
         html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
@@ -202,11 +220,26 @@ if ($dir) {
     $extras .= '&dir=' . $dir;
 }
 
+if ($class->testnr) {
+    $testdiv = html_writer::tag('h2', get_string('testnumber', 'local_fitcheck', $class->testnr));
+    if ($complete) {
+        $testdiv .= html_writer::tag('h4', get_string('complete', 'local_fitcheck'));
+    } else {
+        $testdiv .= html_writer::tag('h4', get_string('incomplete', 'local_fitcheck'));
+    }
+} else {
+    $testdiv = html_writer::tag('h2', get_string('testnumbernone', 'local_fitcheck'));
+}
+
+$newtestbutton = html_writer::tag('button', get_string('startnewtest', 'local_fitcheck'),
+    ['name' => 'newtest', 'id' => 'newtest', 'type' => 'submit', 'class' => 'btn btn-secondary float-right', 'value' => 1]);
+
 $hidinputs = html_writer::tag('input', '', ['value' => $sort, 'name' => 'sort', 'id' => 'sort', 'hidden' => '']) .
     html_writer::tag('input', '', ['value' => $dir, 'name' => 'dir', 'id' => 'dir', 'hidden' => '']) .
     html_writer::tag('input', '', ['value' => $id, 'name' => 'id', 'id' => 'id', 'hidden' => '']);
 
 echo $OUTPUT->header();
-echo html_writer::tag('form', $select . $hidinputs, ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
+echo $testdiv;
+echo html_writer::tag('form', $select . $hidinputs . $newtestbutton, ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
 echo html_writer::table($table);
 echo $OUTPUT->footer();
