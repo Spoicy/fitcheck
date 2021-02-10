@@ -25,4 +25,4 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'local_fitcheck';
-$plugin->version = 2021012500;
+$plugin->version = 2021021000;

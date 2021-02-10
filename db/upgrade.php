@@ -26,25 +26,36 @@ function xmldb_local_fitcheck_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2021012500) {
+    if ($oldversion < 2021021000) {
 
-        // Define field teacherid to be added to local_fitcheck_classes.
+        // Define field testnr to be added to local_fitcheck_classes.
         $table = new xmldb_table('local_fitcheck_classes');
-        $field = new xmldb_field('teacherid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'gender');
+        $field = new xmldb_field('testnr', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'gender');
 
-        // Conditionally launch add field teacherid.
+        // Conditionally launch add field testnr.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define key teacherid (foreign) to be added to local_fitcheck_classes.
-        $table = new xmldb_table('local_fitcheck_classes');
-        $key = new xmldb_key('teacherid', XMLDB_KEY_FOREIGN, ['teacherid'], 'user', ['id']);
+        // Define field offset to be added to local_fitcheck_users.
+        $table = new xmldb_table('local_fitcheck_users');
+        $field = new xmldb_field('offset', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'id');
 
-        // Launch add key teacherid.
-        $dbman->add_key($table, $key);
+        // Conditionally launch add field offset.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field testnr to be added to local_fitcheck_results.
+        $table = new xmldb_table('local_fitcheck_results');
+        $field = new xmldb_field('testnr', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'result');
+
+        // Conditionally launch add field testnr.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
 
         // Fitcheck savepoint reached.
-        upgrade_plugin_savepoint(true, 2021012500, 'local', 'fitcheck');
+        upgrade_plugin_savepoint(true, 2021021000, 'local', 'fitcheck');
     }
 }
