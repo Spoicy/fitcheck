@@ -327,7 +327,11 @@ function local_fitcheck_load_classform($class) {
 }
 
 /**
+ * Calculate a FitCheck grade
  * 
+ * @param stdClass $test test db object
+ * @param float $data result data
+ * @return float
  */
 
 function local_fitcheck_calc_grade($test, $data) {
