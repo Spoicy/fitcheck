@@ -44,6 +44,7 @@ if (!has_capability('local/fitcheck:deleteusers', context_system::instance())) {
     print_error('accessdenied', 'admin');
 }
 
+// Create table headings with sort functionality.
 $tableheaders = array('testname', 'gender', 'status');
 if ($dir == 'asc') {
     $sortdir = 'desc';
@@ -82,6 +83,7 @@ foreach ($tableheaders as $tableheader) {
 
 $tests = $DB->get_records('local_fitcheck_tests', null, $sqlsort);
 
+// Prepare table.
 $table = new html_table();
 $table->head = array();
 $table->colclasses = array();
@@ -91,6 +93,7 @@ $table->head[] = $status;
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'listtable admintable generaltable table-sm';
 
+// Insert test data into table.
 foreach ($tests as $test) {
     $row = array();
     $row[] = $test->fullname;
@@ -105,12 +108,13 @@ foreach ($tests as $test) {
         $row[] = get_string('inactive', 'local_fitcheck');
     }
     $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/edittests.php?id=' . $test->id),
-        $OUTPUT->pix_icon('t/edit', get_string('edit'))) . 
+        $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
         html_writer::link(new moodle_url('/local/fitcheck/test.php?id=' . $test->id),
         $OUTPUT->pix_icon('t/hide', get_string('viewtest', 'local_fitcheck')));
     $table->data[] = $row;
 }
 
+// Output HTML.
 echo $OUTPUT->header();
 echo html_writer::tag('h2', get_string('testamount', 'local_fitcheck', count($tests)));
 echo html_writer::table($table);

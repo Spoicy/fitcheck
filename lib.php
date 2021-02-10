@@ -97,7 +97,8 @@ function local_fitcheck_update_test($test) {
 
 /**
  * Retrieve an uploaded FitCheck file
- * 
+ * Based on other _pluginfile functions.
+ *
  * @category  files
  * @param stdClass $course course object
  * @param stdClass $birecord_or_cm block instance record
@@ -136,29 +137,36 @@ function local_fitcheck_pluginfile($course, $cm, $context, $filearea, $args, $fo
 
 /**
  * Load the FitCheck class form
- * 
+ *
  * @param stdClass $class fitcheck class object
  */
 
 function local_fitcheck_load_classform($class) {
     global $DB, $OUTPUT;
 
-    
-    $loading = $OUTPUT->image_url("i/loading", "core");
-    //$loadingpath = $loading->path . $loading->slashargument;
-
     $html = '';
-    $availablestudentssqlbase = 'FROM {user} u WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL) AND u.id != ' . $class->teacherid;
-    $classstudentssqlbase = "FROM {user} u INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id INNER JOIN {local_fitcheck_classes} lfc ON lfu.classid = lfc.id WHERE lfu.classid = $class->id";
 
+    // Fetch loading animation.
+    $loading = $OUTPUT->image_url("i/loading", "core");
+
+    // Prepare sql query segments.
+    $availablestudentssqlbase = 'FROM {user} u WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)' .
+        ' AND u.id != ' . $class->teacherid;
+    $classstudentssqlbase = "FROM {user} u INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id INNER JOIN {local_fitcheck_classes} lfc " .
+        " ON lfu.classid = lfc.id WHERE lfu.classid = $class->id";
+
+    // Prepare sql queries.
     $availablestudentssql = 'SELECT u.id, u.username, u.firstname, u.lastname ' . $availablestudentssqlbase;
     $classstudentssql = 'SELECT u.id, u.username, u.firstname, u.lastname ' . $classstudentssqlbase;
-    $remainingstudentssql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u WHERE u.id NOT IN (SELECT u.id $availablestudentssqlbase) AND u.id NOT IN (SELECT u.id $classstudentssqlbase) AND u.id != $class->teacherid";
+    $remainingstudentssql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u WHERE u.id NOT IN (SELECT u.id $availablestudentssqlbase)" .
+        " AND u.id NOT IN (SELECT u.id $classstudentssqlbase) AND u.id != $class->teacherid";
 
+    // Fetch students from database.
     $availablestudents = $DB->get_records_sql($availablestudentssql . ' ORDER BY u.firstname');
     $classstudents = $DB->get_records_sql($classstudentssql . ' ORDER BY u.firstname');
     $remainingstudents = $DB->get_records_sql($remainingstudentssql . ' ORDER BY u.firstname');
 
+    // Prepare selects.
     $availableselect = '';
     $classselect = '';
     $remainingselect = '';
@@ -181,8 +189,9 @@ function local_fitcheck_load_classform($class) {
     $remainingoptgroup = html_writer::tag('optgroup', $remainingselect,
         ['label' => get_string('alrassignedcount', 'local_fitcheck', count($remainingstudents)), 'disabled' => '']);
 
-    $assignedtd = html_writer::tag('td', 
-        html_writer::tag('p', 
+    // Create table cells for the selects and buttons.
+    $assignedtd = html_writer::tag('td',
+        html_writer::tag('p',
             html_writer::label(get_string('assigned', 'local_fitcheck'), 'assignedselect', true, ['class' => 'font-weight-bold'])
         ) .
         html_writer::div(
@@ -191,21 +200,21 @@ function local_fitcheck_load_classform($class) {
                 'name' => 'assignedselect', 'id' => 'assignedselect', 'size' => '20', 'onchange' => 'enableAssigned()'])
         ) .
         html_writer::div(
-            html_writer::label(get_string('search', 'local_fitcheck'), 'assignedselect_searchtext', true, ['class' => 'mr-1']) . 
+            html_writer::label(get_string('search', 'local_fitcheck'), 'assignedselect_searchtext', true, ['class' => 'mr-1']) .
             html_writer::tag('input', '', ['type' => 'text', 'size' => '15', 'class' => 'form-control',
-                'id' => 'assignedselect_searchtext', 'name' => 'assignedselect_searchtext', 'oninput' => 'searchAssigned()']) . 
+                'id' => 'assignedselect_searchtext', 'name' => 'assignedselect_searchtext', 'oninput' => 'searchAssigned()']) .
             html_writer::tag('input', '', ['type' => 'button', 'value' => get_string('clear', 'local_fitcheck'),
-                'id' => 'assignedselect_cleartext', 'name' => 'assignedselect_cleartext', 
+                'id' => 'assignedselect_cleartext', 'name' => 'assignedselect_cleartext',
                 'class' => 'btn btn-secondary mx-1', 'onclick' => 'clearAssigned()']),
         'form-inline classsearch my-1'), ['id' => 'assignedcell']
     );
-    $buttonstd = html_writer::tag('td', 
+    $buttonstd = html_writer::tag('td',
         html_writer::div(
             html_writer::tag('input', '', [
                 'id' => 'add', 'name' => 'add', 'type' => 'submit',
                 'value' => get_string('add', 'local_fitcheck'), 'class' => 'btn btn-secondary', 'disabled' => ''
                 ]), '', ['id' => 'addcontrols']
-        ) . 
+        ) .
         html_writer::div(
             html_writer::tag('input', '', [
                 'id' => 'remove', 'name' => 'remove', 'type' => 'submit',
@@ -216,24 +225,25 @@ function local_fitcheck_load_classform($class) {
     $notassignedtd = html_writer::tag('td',
         html_writer::tag('p',
             html_writer::label(get_string('notassigned', 'local_fitcheck'), 'unassignedselect', true, ['class' => 'font-weight-bold'])
-        ) . 
+        ) .
         html_writer::div(
             html_writer::tag('select', $availableoptgroup . $remainingoptgroup, [
                 'multiple' => 'multiple', 'class' => 'form-control',
                 'name' => 'unassignedselect', 'id' => 'unassignedselect', 'size' => '20', 'onChange' => 'enableUnassigned()'])
         ) .
         html_writer::div(
-            html_writer::label(get_string('search', 'local_fitcheck'), 'unassignedselect_searchtext', true, ['class' => 'mr-1']) . 
+            html_writer::label(get_string('search', 'local_fitcheck'), 'unassignedselect_searchtext', true, ['class' => 'mr-1']) .
             html_writer::tag('input', '', ['type' => 'text', 'size' => '15', 'class' => 'form-control',
-                'id' => 'unassignedselect_searchtext', 'name' => 'unassignedselect_searchtext', 'oninput' => 'searchUnassigned()']) . 
+                'id' => 'unassignedselect_searchtext', 'name' => 'unassignedselect_searchtext', 'oninput' => 'searchUnassigned()']) .
             html_writer::tag('input', '', ['type' => 'button', 'value' => get_string('clear', 'local_fitcheck'),
                 'id' => 'unassignedselect_cleartext', 'name' => 'unassignedselect_cleartext',
                 'class' => 'btn btn-secondary mx-1', 'onclick' => 'clearUnassigned()']),
         'form-inline classsearch my-1'), ['id' => 'unassignedcell']
     );
 
-    $html = html_writer::tag('table', 
-        html_writer::tag('tbody', html_writer::tag('tr', $assignedtd . $buttonstd . $notassignedtd)), 
+    // Prepare HTML for output with table and search scripts.
+    $html = html_writer::tag('table',
+        html_writer::tag('tbody', html_writer::tag('tr', $assignedtd . $buttonstd . $notassignedtd)),
             ['class' => 'fitcheck-classtable w-100']) .
         html_writer::script('
             var timer;
@@ -254,7 +264,7 @@ function local_fitcheck_load_classform($class) {
                 }
                 var data = JSON.stringify(variables);
                 clearTimeout(timer);
-                timer = setTimeout(function() { 
+                timer = setTimeout(function() {
                     $.ajax({
                         url: "../ajax/search.php",
                         type: "POST",
@@ -270,7 +280,7 @@ function local_fitcheck_load_classform($class) {
                         }
                     })
                 }, 500);
-                
+
             }
             function searchUnassigned() {
                 $("#unassignedselect").css("background", "url('.$loading.') center center no-repeat");
@@ -282,7 +292,7 @@ function local_fitcheck_load_classform($class) {
                 }
                 var data = JSON.stringify(variables);
                 clearTimeout(timer);
-                timer = setTimeout(function() { 
+                timer = setTimeout(function() {
                     $.ajax({
                         url: "../ajax/search.php",
                         type: "POST",

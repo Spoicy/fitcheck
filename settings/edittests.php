@@ -97,6 +97,7 @@ if ($testform->is_cancelled()) {
     redirect($returnurl);
 }
 
+// Output HTML.
 echo $OUTPUT->header();
 $testform->display();
 echo $OUTPUT->footer();

@@ -145,7 +145,6 @@ if ($view != 0) {
 $students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id FROM {user} u, {local_fitcheck_users} lfu
     WHERE classid = ' . $id .
     ' AND u.id = lfu.userid');
-//$students = $DB->get_records('local_fitcheck_users', ['classid' => $id]);
 
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
@@ -158,7 +157,7 @@ foreach ($students as $student) {
     }
     $row[] = 'grade';
     $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
-        $OUTPUT->pix_icon('t/edit', get_string('edit'))) . 
+        $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
         html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
         $OUTPUT->pix_icon('t/hide', get_string('viewstudentresults', 'local_fitcheck')));
     $table->data[] = $row;
@@ -172,12 +171,11 @@ if ($dir) {
     $extras .= '&dir=' . $dir;
 }
 
-$hidinputs = html_writer::tag('input', '', ['value' => $sort, 'name' => 'sort', 'id' => 'sort', 'hidden' => '']) . 
-    html_writer::tag('input', '', ['value' => $dir, 'name' => 'dir', 'id' => 'dir', 'hidden' => '']) . 
+$hidinputs = html_writer::tag('input', '', ['value' => $sort, 'name' => 'sort', 'id' => 'sort', 'hidden' => '']) .
+    html_writer::tag('input', '', ['value' => $dir, 'name' => 'dir', 'id' => 'dir', 'hidden' => '']) .
     html_writer::tag('input', '', ['value' => $id, 'name' => 'id', 'id' => 'id', 'hidden' => '']);
 
 echo $OUTPUT->header();
 echo html_writer::tag('form', $select . $hidinputs, ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
-//echo $select;
 echo html_writer::table($table);
 echo $OUTPUT->footer();

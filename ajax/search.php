@@ -38,7 +38,9 @@ require_login();
 // Get the search parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
 
+// Display the select differently depending on if search is empty or not.
 if ($data->search != "") {
+    // Differentiate between both selects.
     if ($data->mode == 0) {
         $assigned = $DB->get_records_sql($data->assignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
              LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
@@ -81,6 +83,7 @@ if ($data->search != "") {
         $output = $unassignedoptgroup . $alrassignedoptgroup;
     }
 } else {
+    // Differentiate between both selects.
     if ($data->mode == 0) {
         $assigned = $DB->get_records_sql($data->assignedsql . ' ORDER BY u.firstname');
         $assignedselect = '';

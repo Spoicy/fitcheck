@@ -45,6 +45,7 @@ if (!is_numeric($idcheck)) {
     print_error('iderror', 'local_fitcheck');
 }
 
+// Load class if exists.
 if ($id != -1) {
     $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
     if ($class->teacherid != $USER->id && !has_capability('moodle/site:config', context_system::instance())) {
@@ -56,11 +57,13 @@ if ($id != -1) {
     $class->name = '';
 }
 
+// Get params.
 $classname = optional_param('classname', '', PARAM_TEXT);
 $classgender = optional_param('classgender', -1, PARAM_INT);
 $unassignedstudentid = optional_param('unassignedselect', 0, PARAM_INT);
 $assignedstudentid = optional_param('assignedselect', 0, PARAM_INT);
 
+// Save class to database.
 if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender != -1 && confirm_sesskey()) {
     $class->name = $classname;
     $class->gender = $classgender;
@@ -74,6 +77,7 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
     }
 }
 
+// Add student to class.
 if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_sesskey()) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $unassignedstudentid]);
     if ($student) {
@@ -87,47 +91,48 @@ if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_
     }
 }
 
+// Remove student from class.
 if (optional_param('remove', false, PARAM_BOOL) && $assignedstudentid && confirm_sesskey()) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $assignedstudentid]);
-    $student->classid = NULL;
+    $student->classid = null;
     $DB->update_record('local_fitcheck_users', $student);
 }
 
+// Display teacher name if class exists in database.
 $teacherdiv = '';
 if ($class->id > 0) {
     $teacher = $DB->get_record('user', ['id' => $class->teacherid]);
     $teacherdiv = html_writer::div(
-        html_writer::div(html_writer::label(get_string('classteacher', 'local_fitcheck') . ': ', 'classteacher'), 
+        html_writer::div(html_writer::label(get_string('classteacher', 'local_fitcheck') . ': ', 'classteacher'),
             'col-md-3 col-form-label d-flex label-classteacher') .
         html_writer::div(
             html_writer::tag('input', '', [
                 'type' => 'text', 'id' => 'classteacher', 'name' => 'classteacher', 'disabled' => '',
                 'class' => 'form-control', 'size' => '10', 'value' => "$teacher->firstname $teacher->lastname"
-            ]), 
+            ]),
             'col-md-9 form-inline'), 'form-group row');
 }
-
 $classinfoform = html_writer::div(
-    html_writer::div(html_writer::label(get_string('classname', 'local_fitcheck') . ': ', 'classname'), 
+    html_writer::div(html_writer::label(get_string('classname', 'local_fitcheck') . ': ', 'classname'),
         'col-md-3 col-form-label d-flex label-classname') .
     html_writer::div(
         html_writer::tag('input', '', [
             'type' => 'text', 'id' => 'classname', 'name' => 'classname',
             'class' => 'form-control', 'size' => '10', 'required' => '', 'value' => $class->name
-        ]), 
-        'col-md-9 form-inline'), 'form-group row') . 
+        ]),
+        'col-md-9 form-inline'), 'form-group row') .
     html_writer::div(
-        html_writer::div(html_writer::label(get_string('classgender', 'local_fitcheck') . ': ', 'classgender'), 
+        html_writer::div(html_writer::label(get_string('classgender', 'local_fitcheck') . ': ', 'classgender'),
             'col-md-3 col-form-label d-flex label-classgender') .
         html_writer::div(
             html_writer::select([
                 get_string('maleunisex', 'local_fitcheck'),
                 get_string('female', 'local_fitcheck')
-            ], 'classgender', 0, '', ['id' => 'classgender', 'class' => 'form-control', 'required' => '']), 
+            ], 'classgender', 0, '', ['id' => 'classgender', 'class' => 'form-control', 'required' => '']),
             'col-md-9 form-inline'), 'form-group row') .
     $teacherdiv .
     html_writer::div(
-        html_writer::div('', 'col-md-3 col-form-label d-flex') . 
+        html_writer::div('', 'col-md-3 col-form-label d-flex') .
         html_writer::div(
             html_writer::tag('input', '', ['type' => 'submit', 'value' => get_string('saveclassinfo', 'local_fitcheck'),
                 'class' => 'btn btn-primary mr-1', 'id' => 'saveinfo', 'name' => 'saveinfo']) .
@@ -137,16 +142,19 @@ $classinfoform = html_writer::div(
             'col-md-9'), 'form-group row'
     );
 
+// Load classform if class exists in database.
 if ($class->id != -1) {
     $classform = local_fitcheck_load_classform($class);
 } else {
     $classform = html_writer::tag('p', get_string('createclasstounlock', 'local_fitcheck'));
 }
 
+// Prepare form.
 $form = html_writer::tag('form', $classinfoform . $classform,
     ['action' => new moodle_url($PAGE->url, ['sesskey' => sesskey()]), 'method' => 'post', 'class' => 'fitcheck-classform']);
 
-echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
+echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
 echo $OUTPUT->header();
 echo $form;
 echo $OUTPUT->footer();

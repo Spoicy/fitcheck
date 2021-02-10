@@ -44,6 +44,8 @@ echo html_writer::script('', 'https://cdn.zingchart.com/zingchart.min.js');
 
 $chart = html_writer::div('', 'chart--container', ['id' => 'resultsChart', 'style' => 'height:450px;']);
 $pref = 0;
+
+// Fetch tests and user results from database.
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $pref, 'status' => 1]);
 $results = $DB->get_records('local_fitcheck_results', ['userid' => $userid]);
 
@@ -51,16 +53,17 @@ $testnames = '';
 $testids = [];
 $testidslabels = [];
 
+// Sort tests and results into arrays for later processing.
 foreach ($tests as $test) {
     $testnames .= "'" . $test->shortname . "',";
     $testids[$test->id] = [];
     $testidslabels[$test->id] = $test->shortname;
 }
-
 foreach ($results as $result) {
     $testids[$result->testid][] += $result->result;
 }
 
+// Fetch highest and lowest test count.
 $lowest = -1;
 $highest = 0;
 foreach ($testids as $test) {
@@ -72,6 +75,7 @@ foreach ($testids as $test) {
     }
 }
 
+// Set which tests to display, max of 3.
 if ($highest > $lowest + 2) {
     $highest = $lowest + 2;
 } else if ($highest - $lowest < 2) {
@@ -82,15 +86,17 @@ if ($highest > $lowest + 2) {
 }
 
 $testdata = [];
-$lowestArrVal = 0;
+$lowestarrval = 0;
 if ($lowest != 0) {
-    $lowestArrVal = $lowest-1;
+    $lowestarrval = $lowest - 1;
 }
 
+// Slice arrays to get only the tests we want to display.
 foreach ($testids as $key => $test) {
-    $testdata[$key] = array_slice($test, $lowestArrVal, $highest-$lowest+1);
+    $testdata[$key] = array_slice($test, $lowestarrval, $highest - $lowest + 1);
 }
 
+// Calculate grades.
 foreach ($tests as $test) {
     $newtestdata = [];
     foreach ($testdata[$test->id] as $data) {
@@ -117,6 +123,7 @@ foreach ($tests as $test) {
     $testdata[$test->id] = $newtestdata;
 }
 
+// Prepare series string for ZingChart.
 $series = '';
 for ($i = 0; $i < 3; $i++) {
     $series .= '{ values: ';
@@ -129,13 +136,13 @@ for ($i = 0; $i < 3; $i++) {
         }
     }
     $datastring .= ']';
-    $series .= $datastring . ', text: \'' . get_string('testnumber', 'local_fitcheck', $lowest+$i) . '\'},';
+    $series .= $datastring . ', text: \'' . get_string('testnumber', 'local_fitcheck', $lowest + $i) . '\'},';
 }
 
+// Create grade table header.
 $testnamesheader = html_writer::tag('th', html_writer::div(get_string('grade', 'local_fitcheck'), 'gradetablecell'), ['class' => 'p-1 text-center']);
 $testgrades = '';
 $firsttestid = array_key_first($testidslabels);
-
 foreach ($tests as $test) {
     if ($firsttestid == $test->id) {
         $testnamesheader .= html_writer::tag('td', html_writer::div($test->shortname, 'gradetablecell'), ['class' => 'p-1 text-center selectcurrent gradescale-' . $test->id]);
@@ -144,8 +151,9 @@ foreach ($tests as $test) {
     }
 }
 
+// Calculate grade table display values in increments of 0.5.
 for ($i = 6; $i >= 1; $i = $i - 0.5) {
-    $testgrades .= html_writer::start_tag('tr') . 
+    $testgrades .= html_writer::start_tag('tr') .
         html_writer::tag('th', html_writer::div($i, 'gradetablecell'), ['class' => 'p-1 text-center']);
     foreach ($tests as $test) {
         if ($test->minmax) {
@@ -170,14 +178,14 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
     $testgrades .= html_writer::end_tag('tr');
 }
 
+// Create table and select.
 $tablecontent = html_writer::tag('tr', $testnamesheader, ) . $testgrades;
-
 $gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable']);
-
 $gradeselect = html_writer::select(
     $testidslabels, 'gradeselect', $firsttestid, '', ['id' => 'gradeselect', 'onchange' => 'updateGradeTable(this)', 'class' => 'my-3']
 );
 
+// Output HTML and scripts.
 echo $OUTPUT->header();
 echo $chart;
 echo html_writer::script("
@@ -231,7 +239,7 @@ var myConfig = {
         }
     },
     series: [" . $series . "],
-    
+
 };
 
 zingchart.render({

@@ -48,6 +48,7 @@ $PAGE->navbar->add('FitCheck', new moodle_url('/local/fitcheck'));
 $PAGE->navbar->add(get_string('settings', 'local_fitcheck'), new moodle_url('/local/fitcheck/settings'));
 $PAGE->navbar->add(get_string('browselistclasses', 'local_fitcheck'));
 
+// Prepare table headings with sort functionality.
 $tableheaders = array('classname', 'gender', 'firstname', 'lastname');
 if ($dir == 'asc') {
     $sortdir = 'desc';
@@ -88,14 +89,15 @@ switch ($sort) {
     default:
         $sqlsort = '';
 }
+// If sorting by teacher, prepare classes SQL differently.
 if (isset($teachersort)) {
     if ($conditions) {
         $conditions = 'AND lfc.' . array_key_first($conditions) . ' = ' . $conditions[0] . ' ';
     } else {
         $conditions = '';
     }
-    $classes = $DB->get_records_sql('SELECT lfc.id, lfc.name, lfc.gender, lfc.teacherid, u.firstname 
-        FROM {local_fitcheck_classes} lfc, {user} u 
+    $classes = $DB->get_records_sql('SELECT lfc.id, lfc.name, lfc.gender, lfc.teacherid, u.firstname
+        FROM {local_fitcheck_classes} lfc, {user} u
         WHERE u.id = lfc.teacherid ' . $conditions . '
         ORDER BY u.' . $sortname . ' ' . $dir);
 } else {
@@ -106,6 +108,7 @@ foreach ($tableheaders as $tableheader) {
         ['href' => $PAGE->url . '?sort=' . $tableheader . '&dir=asc']);
 }
 
+// Set page heading differently if in teacher view.
 if ($conditions) {
     $heading = html_writer::tag('h2', get_string('classamountforteacher', 'local_fitcheck', count($classes)));
     $teacher = get_string('listteacher', 'local_fitcheck');
@@ -114,6 +117,7 @@ if ($conditions) {
     $teacher = $firstname . ' / ' . $lastname;
 }
 
+// Prepare table.
 $table = new html_table();
 $table->head = array();
 $table->colclasses = array();
@@ -123,6 +127,7 @@ $table->head[] = $teacher;
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'listtable admintable generaltable table-sm';
 
+// Insert class data into table.
 foreach ($classes as $class) {
     $row = array();
     $teacher = $DB->get_record('user', ['id' => $class->teacherid]);
@@ -140,6 +145,7 @@ foreach ($classes as $class) {
     $table->data[] = $row;
 }
 
+// Output HTML.
 echo $OUTPUT->header();
 echo $heading;
 echo html_writer::table($table);

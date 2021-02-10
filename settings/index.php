@@ -35,31 +35,31 @@ $PAGE->set_heading(get_string('title', 'local_fitcheck'));
 $PAGE->navbar->add('FitCheck', new moodle_url('/local/fitcheck'));
 $PAGE->navbar->add(get_string('settings', 'local_fitcheck'));
 
+// Display settings based on what capabilities are enabled.
 $li = '';
 if (has_capability('local/fitcheck:edittests', context_system::instance())) {
-    $li .= html_writer::tag('li', 
+    $li .= html_writer::tag('li',
         html_writer::tag('a', html_writer::tag('h5', get_string('browselisttests', 'local_fitcheck')),
-            ['href' => new moodle_url('/local/fitcheck/settings/listtests.php')])) . 
+            ['href' => new moodle_url('/local/fitcheck/settings/listtests.php')])) .
         html_writer::tag('li',
             html_writer::tag('a', html_writer::tag('h5', get_string('createnewtest', 'local_fitcheck')),
             ['href' => new moodle_url('/local/fitcheck/settings/edittests.php?id=-1')]),
         );
 }
 if (has_capability('local/fitcheck:editclasses', context_system::instance())) {
-    $li .= html_writer::tag('li', 
+    $li .= html_writer::tag('li',
         html_writer::tag('a', html_writer::tag('h5', get_string('browselistclasses', 'local_fitcheck')),
-            ['href' => new moodle_url('/local/fitcheck/settings/listclasses.php')])) . 
+            ['href' => new moodle_url('/local/fitcheck/settings/listclasses.php')])) .
         html_writer::tag('li',
             html_writer::tag('a', html_writer::tag('h5', get_string('createnewclass', 'local_fitcheck')),
             ['href' => new moodle_url('/local/fitcheck/settings/editclass.php?id=-1')]),
         );
 }
 
-$html = html_writer::tag('h2', get_string('settings')) . 
-    html_writer::tag('ul', 
+// Output HTML.
+echo $OUTPUT->header();
+echo html_writer::tag('h2', get_string('settings')) .
+    html_writer::tag('ul',
         $li, ['class' => 'list-unstyled ml-0 pt-2']
     );
-
-echo $OUTPUT->header();
-echo $html;
 echo $OUTPUT->footer();

@@ -35,8 +35,8 @@ $PAGE->set_heading(get_string('title', 'local_fitcheck'));
 $PAGE->navbar->add('FitCheck');
 
 // Get tests and user pref.
-$pref = $DB->get_record_sql('SELECT lfc.gender FROM {local_fitcheck_classes} lfc 
-    INNER JOIN  {local_fitcheck_users} lfu 
+$pref = $DB->get_record_sql('SELECT lfc.gender FROM {local_fitcheck_classes} lfc
+    INNER JOIN {local_fitcheck_users} lfu
     ON lfc.id = lfu.classid
     WHERE lfu.userid = ' . $USER->id);
 if (!$pref) {
@@ -133,7 +133,8 @@ $html .= html_writer::script('
 ');
 
 // Output the page.
-echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
+echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
 echo $OUTPUT->header();
 echo $html;
 echo $OUTPUT->footer();
