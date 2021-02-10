@@ -122,6 +122,12 @@ $string['classeslist'] = 'Classes list';
 $string['classamountforteacher'] = '{$a} assigned class(es)';
 $string['classamount'] = '{$a} class(es)';
 $string['testamount'] = '{$a} test(s)';
+$string['viewstudentresults'] = 'View student results';
+$string['liststudentfirstname'] = 'Student first name';
+$string['liststudentlastname'] = 'last name';
+$string['listgrade'] = 'Grade';
+$string['listresult'] = 'Result';
+$string['average'] = 'Average';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

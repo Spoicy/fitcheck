@@ -27,6 +27,9 @@ require_login();
 require_capability('local/fitcheck:viewallresults', context_system::instance());
 
 $id = required_param('id', PARAM_INT);
+$sort = optional_param('sort', '', PARAM_TEXT);
+$dir = optional_param('dir', '', PARAM_TEXT);
+$view = optional_param('view', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/local/fitcheck/'));
 $PAGE->set_context(context_system::instance());
@@ -36,81 +39,123 @@ $PAGE->set_heading(get_string('title', 'local_fitcheck'));
 $PAGE->navbar->add('FitCheck');
 $PAGE->navbar->add(get_string('classresults', 'local_fitcheck'));
 
-$tableheaders = array('studentfirstname', 'studentlastname',  'result', 'grade');
 if ($dir == 'asc') {
     $sortdir = 'desc';
 } else {
     $sortdir = 'asc';
 }
-switch ($sort) {
-    case "firstname":
-        $studentfirstname = html_writer::tag('a', get_string('liststudentfirstname', 'local_fitcheck'),
-            ['href' => $PAGE->url . '?sort=studentfirstname&dir=' . $sortdir]) .
-            $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
-        unset($tableheaders[0]);
-        $sqlsort = "fullname $dir";
-        break;
-    case "studentlastname":
-        $studentlastname = html_writer::tag('a', get_string('liststudentlastname', 'local_fitcheck'),
-            ['href' => $PAGE->url . '?sort=studentlastname&dir=' . $sortdir]) .
-            $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
-        unset($tableheaders[1]);
-        $sqlsort = "gender $dir";
-        break;
-    case "result":
-        $status = html_writer::tag('a', get_string('listresult', 'local_fitcheck'),
-            ['href' => $PAGE->url . '?sort=result&dir=' . $sortdir]) .
-            $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
-        unset($tableheaders[2]);
-        $sqlsort = "result $dir";
-        break;
-    case "grade":
-        $status = html_writer::tag('a', get_string('listgrade', 'local_fitcheck'),
-            ['href' => $PAGE->url . '?sort=grade&dir=' . $sortdir]) .
-            $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
-        unset($tableheaders[2]);
-        $sqlsort = "grade $dir";
-        break;
-    default:
-        $sqlsort = '';
-}
-foreach ($tableheaders as $tableheader) {
-    $$tableheader = html_writer::tag('a', get_string('list' . $tableheader, 'local_fitcheck'),
-        ['href' => $PAGE->url . '?sort=' . $tableheader . '&dir=asc']);
-}
 
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
-$students = $DB->get_records('local_fitcheck_users', ['classid' => $id]);
+$tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
+$selectoptions = html_writer::tag('option', get_string('average', 'local_fitcheck'), ['value' => 'average', 'selected' => '']);
+foreach ($tests as $test) {
+    $selectoptions .= html_writer::tag('option', $test->shortname, ['value' => $test->id]);
+}
+$select = html_writer::tag('select', $selectoptions, ['name' => 'view', 'id' => 'view', 'class' => 'select custom-select mb-3']);
 
 $table = new html_table();
 $table->head = array();
 $table->colclasses = array();
-$table->head[] = $testname;
-$table->head[] = $gender;
-$table->head[] = $status;
+
+if ($view != 0) {
+    $tableheaders = array('studentfirstname', 'studentlastname', 'result', 'grade');
+    switch ($sort) {
+        case "studentfirstname":
+            $studentfirstname = html_writer::tag('a', get_string('liststudentfirstname', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . 'sort=studentfirstname&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[0]);
+            $sqlsort = "fullname $dir";
+            break;
+        case "studentlastname":
+            $studentlastname = html_writer::tag('a', get_string('liststudentlastname', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=studentlastname&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[1]);
+            $sqlsort = "gender $dir";
+            break;
+        case "result":
+            $status = html_writer::tag('a', get_string('listresult', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=result&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[2]);
+            $sqlsort = "result $dir";
+            break;
+        case "grade":
+            $status = html_writer::tag('a', get_string('listgrade', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=grade&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[2]);
+            $sqlsort = "grade $dir";
+            break;
+        default:
+            $sqlsort = '';
+    }
+    foreach ($tableheaders as $tableheader) {
+        $$tableheader = html_writer::tag('a', get_string('list' . $tableheader, 'local_fitcheck'),
+            ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=' . $tableheader . '&dir=asc']);
+    }
+    $table->head[] = $studentfirstname . ' / ' . $studentlastname;
+    $table->head[] = $result;
+    $table->head[] = $grade;
+} else {
+    $tableheaders = array('studentfirstname', 'studentlastname', 'grade');
+    switch ($sort) {
+        case "studentfirstname":
+            $studentfirstname = html_writer::tag('a', get_string('liststudentfirstname', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=studentfirstname&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[0]);
+            $sqlsort = "fullname $dir";
+            break;
+        case "studentlastname":
+            $studentlastname = html_writer::tag('a', get_string('liststudentlastname', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=studentlastname&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[1]);
+            $sqlsort = "gender $dir";
+            break;
+        case "grade":
+            $status = html_writer::tag('a', get_string('listgrade', 'local_fitcheck'),
+                ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=grade&dir=' . $sortdir]) .
+                $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
+            unset($tableheaders[2]);
+            $sqlsort = "grade $dir";
+            break;
+        default:
+            $sqlsort = '';
+    }
+    foreach ($tableheaders as $tableheader) {
+        $$tableheader = html_writer::tag('a', get_string('list' . $tableheader, 'local_fitcheck'),
+            ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '?sort=' . $tableheader . '&dir=asc']);
+    }
+    $table->head[] = $studentfirstname . ' / ' . $studentlastname;
+    $table->head[] = $grade;
+}
+
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id FROM {user} u, {local_fitcheck_users} lfu
+    WHERE classid = ' . $id .
+    ' AND u.id = lfu.userid');
+//$students = $DB->get_records('local_fitcheck_users', ['classid' => $id]);
+
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
 
 foreach ($students as $student) {
     $row = array();
-    $row[] = $test->fullname;
-    if ($test->gender) {
-        $row[] = get_string('female', 'local_fitcheck');
-    } else {
-        $row[] = get_string('maleunisex', 'local_fitcheck');
+    $row[] = "$student->firstname $student->lastname";
+    if (isset($result)) {
+        $row[] = 'result';
     }
-    if ($test->status) {
-        $row[] = get_string('active', 'local_fitcheck');
-    } else {
-        $row[] = get_string('inactive', 'local_fitcheck');
-    }
-    $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/edittests.php?id=' . $test->id),
+    $row[] = 'grade';
+    $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
         $OUTPUT->pix_icon('t/edit', get_string('edit'))) . 
-        html_writer::link(new moodle_url('/local/fitcheck/test.php?id=' . $test->id),
-        $OUTPUT->pix_icon('t/hide', get_string('viewtest', 'local_fitcheck')));
+        html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
+        $OUTPUT->pix_icon('t/hide', get_string('viewstudentresults', 'local_fitcheck')));
     $table->data[] = $row;
 }
 
 echo $OUTPUT->header();
+echo $select;
 echo html_writer::table($table);
 echo $OUTPUT->footer();
