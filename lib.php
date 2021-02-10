@@ -170,17 +170,24 @@ function local_fitcheck_load_classform($class) {
     $availableselect = '';
     $classselect = '';
     $remainingselect = '';
+
     foreach ($availablestudents as $student) {
-        $availableselect .= html_writer::tag('option', $student->firstname . " " .
-            $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            $availableselect .= html_writer::tag('option', $student->firstname . " " .
+                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+        }
     }
     foreach ($classstudents as $student) {
-        $classselect .= html_writer::tag('option', $student->firstname . " " .
-            $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            $classselect .= html_writer::tag('option', $student->firstname . " " .
+                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+        }
     }
     foreach ($remainingstudents as $student) {
-        $remainingselect .= html_writer::tag('option', $student->firstname . " " .
-            $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            $remainingselect .= html_writer::tag('option', $student->firstname . " " .
+                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+        }
     }
     $availableoptgroup = html_writer::tag('optgroup', $availableselect,
         ['label' => get_string('unassignedcount', 'local_fitcheck', count($availablestudents))]);
