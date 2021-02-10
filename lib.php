@@ -325,3 +325,29 @@ function local_fitcheck_load_classform($class) {
 
     return $html;
 }
+
+/**
+ * 
+ */
+
+function local_fitcheck_calc_grade($test, $data) {
+    if ($test->method != 2) {
+        if ($test->minmax) {
+            $calcresult = ((($test->maxresult - $test->minresult) - ($data - $test->minresult)) / ($test->maxresult - $test->minresult)) * 5 + 1;
+        } else {
+            $calcresult = (($data - $test->minresult) / ($test->maxresult - $test->minresult)) * 5 + 1;
+        }
+    } else {
+        if ($test->minmax) {
+            $calcresult = ((($test->maxresult - $test->minresult) - ((0 - $test->maxresult) + $data)) / ($test->maxresult - $test->minresult)) * 5 + 1;
+        } else {
+            $calcresult = (((0 - $test->minresult) + $data) / ($test->maxresult - $test->minresult)) * 5 + 1;
+        }
+    }
+    if ($calcresult > 6) {
+        $calcresult = 6;
+    } else if ($calcresult < 1) {
+        $calcresult = 1;
+    }
+    return round($calcresult, 2);
+}

@@ -23,6 +23,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot.'/local/fitcheck/lib.php');
 require_login();
 !isguestuser($USER->id) || print_error('noguest');
 
@@ -100,25 +101,7 @@ foreach ($testids as $key => $test) {
 foreach ($tests as $test) {
     $newtestdata = [];
     foreach ($testdata[$test->id] as $data) {
-        if ($test->method != 2) {
-            if ($test->minmax) {
-                $calcresult = ((($test->maxresult - $test->minresult) - ($data - $test->minresult)) / ($test->maxresult - $test->minresult)) * 5 + 1;
-            } else {
-                $calcresult = (($data - $test->minresult) / ($test->maxresult - $test->minresult)) * 5 + 1;
-            }
-        } else {
-            if ($test->minmax) {
-                $calcresult = ((($test->maxresult - $test->minresult) - ((0 - $test->maxresult) + $data)) / ($test->maxresult - $test->minresult)) * 5 + 1;
-            } else {
-                $calcresult = (((0 - $test->minresult) + $data) / ($test->maxresult - $test->minresult)) * 5 + 1;
-            }
-        }
-        if ($calcresult > 6) {
-            $calcresult = 6;
-        } else if ($calcresult < 1) {
-            $calcresult = 1;
-        }
-        $newtestdata[] += round($calcresult, 2);
+        $newtestdata[] += local_fitcheck_calc_grade($test, $data);
     }
     $testdata[$test->id] = $newtestdata;
 }
