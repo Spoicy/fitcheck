@@ -23,6 +23,7 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot.'/local/fitcheck/lib.php');
 require_login();
 require_capability('local/fitcheck:viewallresults', context_system::instance());
 
@@ -49,12 +50,16 @@ $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
 if ($view == 0) {
     $selectoptions = html_writer::tag('option', get_string('average', 'local_fitcheck'), ['value' => 'average', 'selected' => '']);
+    $currenttest = new stdClass();
+    $currenttest->id = 0;
+    $currenttest->method = 0;
 } else {
     $selectoptions = html_writer::tag('option', get_string('average', 'local_fitcheck'), ['value' => 'average']);
 }
 foreach ($tests as $test) {
     if ($view == $test->id) {
         $selectoptions .= html_writer::tag('option', $test->shortname, ['value' => $test->id, 'selected' => '']);
+        $currenttest = $test;
     } else {
         $selectoptions .= html_writer::tag('option', $test->shortname, ['value' => $test->id]);
     }
@@ -152,10 +157,36 @@ $table->attributes['class'] = 'admintable generaltable table-sm';
 foreach ($students as $student) {
     $row = array();
     $row[] = "$student->firstname $student->lastname";
+
     if (isset($result)) {
-        $row[] = 'result';
+        $results = $DB->get_records('local_fitcheck_results', ['userid' => $student->id, 'testid' => $currenttest->id], 'id DESC');
+        if (count($results)) {
+            $currresult = array_shift($results);
+            if (isset($currresult->result) && ($currresult->result != null || $currresult->result != '')) {
+                $row[] = $currresult->result;
+            } else {
+                $row[] = '-';
+            }
+        } else {
+            $row[] = '-';
+        }
     }
-    $row[] = 'grade';
+
+    if ($currenttest->id != 0 && isset($currenttest)) {
+        $results = $DB->get_records('local_fitcheck_results', ['userid' => $student->id, 'testid' => $currenttest->id], 'id DESC');
+        if (count($results)) {
+            $currresult = array_shift($results);
+            if ($currresult->result != null || $currresult->result != '') {
+                $row[] = local_fitcheck_calc_grade($currenttest, $currresult->result);
+            } else {
+                $row[] = '-';
+            }
+        } else {
+            $row[] = '-';
+        }
+    } else {
+
+    }
     $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
         $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
         html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
