@@ -121,7 +121,7 @@ $table->head[] = $classname;
 $table->head[] = $gender;
 $table->head[] = $teacher;
 $table->head[] = get_string('edit');
-$table->attributes['class'] = 'admintable generaltable table-sm';
+$table->attributes['class'] = 'listtable admintable generaltable table-sm';
 
 foreach ($classes as $class) {
     $row = array();

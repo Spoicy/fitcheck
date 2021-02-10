@@ -89,7 +89,7 @@ $table->head[] = $testname;
 $table->head[] = $gender;
 $table->head[] = $status;
 $table->head[] = get_string('edit');
-$table->attributes['class'] = 'admintable generaltable table-sm';
+$table->attributes['class'] = 'listtable admintable generaltable table-sm';
 
 foreach ($tests as $test) {
     $row = array();
@@ -112,6 +112,7 @@ foreach ($tests as $test) {
 }
 
 echo $OUTPUT->header();
+echo html_writer::tag('h2', get_string('testamount', 'local_fitcheck', count($tests)));
 echo html_writer::table($table);
 echo html_writer::tag('a', get_string('addnewtest', 'local_fitcheck'),
     ['href' => new moodle_url('/local/fitcheck/settings/edittests.php?id=-1'), 'class' => 'btn btn-secondary']);

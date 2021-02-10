@@ -121,6 +121,7 @@ $string['classresults'] = 'Class results';
 $string['classeslist'] = 'Classes list';
 $string['classamountforteacher'] = '{$a} assigned class(es)';
 $string['classamount'] = '{$a} class(es)';
+$string['testamount'] = '{$a} test(s)';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

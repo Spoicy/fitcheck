@@ -82,3 +82,7 @@
     display: flex;
     margin: auto;
 }
+
+.listtable {
+    margin-top: 1.25rem;
+}
