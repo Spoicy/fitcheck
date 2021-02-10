@@ -1,0 +1,177 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The FitCheck individual test page.
+ *
+ * @package    local_fitcheck
+ * @copyright  2021 Jae Funke
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/filebrowser/file_browser.php');
+require_once($CFG->dirroot . '/local/fitcheck/classes/edittests_form.php');
+require_login();
+!isguestuser($USER->id) || print_error('noguest');
+
+$id = required_param('id', PARAM_INT);
+$result = optional_param('result', '', PARAM_FLOAT);
+$test = $DB->get_record('local_fitcheck_tests', ['id' => $id]);
+$mainpage = new moodle_url('/local/fitcheck/');
+
+
+// Set page values.
+$PAGE->set_url(new moodle_url('/local/fitcheck/test.php?id='.$id));
+$PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('title', 'local_fitcheck') . ' - ' . $test->fullname);
+$PAGE->set_heading(get_string('title', 'local_fitcheck'));
+$PAGE->navbar->add('FitCheck', $mainpage);
+$PAGE->navbar->add($test->shortname);
+
+if ($test->status == 0) {
+    require_capability('local/fitcheck:viewdisabledtests', $PAGE->context);
+}
+
+$returnurl = new moodle_url('/local/fitcheck');
+$urlwithsess = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
+
+if ($result && $result >= 0) {
+    $resulttoadd = new stdClass();
+    $resulttoadd->result = $result;
+    $resulttoadd->testid = $id;
+    $resulttoadd->userid = $USER->id;
+    require_sesskey();
+    $DB->insert_record('local_fitcheck_results', $resulttoadd);
+    redirect($returnurl);
+}
+
+// Prepare test html.
+$html = html_writer::tag('h2', $test->fullname, ['class' => 'fitcheck-test-title', 'style' => 'font-weight: 400;']);
+$html .= file_rewrite_pluginfile_urls($test->description, 'pluginfile.php', $PAGE->context->id, 'local_fitcheck', 'attachment', $test->id * 10 + 1);
+$fs = get_file_storage();
+$filesmask = ['.mov', '.mp4'];
+$filesitemid = $test->id * 10 + 2;
+$files = $fs->get_area_files($PAGE->context->id, 'local_fitcheck', 'attachment', $filesitemid);
+$video = '';
+
+foreach ($files as $file) {
+    if (in_array(substr($file->get_filename(), -4), $filesmask)) {
+        $video = html_writer::tag('h4', get_string('videoheader', 'local_fitcheck')) .
+            html_writer::tag('video', html_writer::start_tag('source', ['src' => '/pluginfile.php/1/local_fitcheck/attachment/' . $filesitemid . '/' . $file->get_filename()]),
+                ['width' => '80%', 'controls' => '', 'class' => 'mb-4 mt-2']);
+    }
+}
+
+// Prepare form, not using moodleform for custom styling.
+if ($test->resulttype1 && $test->resulttype2) {
+    $method = '';
+    if ($test->method == 0) {
+        $method = 'averageCalc()';
+    } else if ($test->method == 1) {
+        $method = 'minusCalc()';
+    }
+
+    $formelements = html_writer::label($test->resulttype1 . ':', 'result1') .
+        html_writer::tag('input', '', [
+            'type' => 'number',
+            'name' => 'result1',
+            'id' => 'result1',
+            'placeholder' => '0',
+            'class' => 'mb-4 form-control w-25',
+            'onkeyup' => $method,
+            'required' => '',
+            'step' => 0.01
+            ]) .
+        html_writer::label($test->resulttype2 . ':', 'result2') .
+        html_writer::tag('input', '', [
+            'type' => 'number',
+            'name' => 'result2',
+            'id' => 'result2',
+            'placeholder' => '0',
+            'class' => 'mb-4 form-control w-25',
+            'onkeyup' => $method,
+            'required' => '',
+            'step' => 0.01
+            ]) .
+        html_writer::label(get_string('testresultaverage', 'local_fitcheck'), 'result') .
+        html_writer::tag('input', '', [
+            'type' => 'number',
+            'name' => 'result',
+            'id' => 'result',
+            'placeholder' => '0',
+            'class' => 'mb-4 form-control w-25',
+            'readonly' => '',
+            'step' => 0.01
+            ]);
+} else {
+    $placeholder = '0';
+    if ($test->method == 2) {
+        $placeholder = '+/- 0';
+    }
+    $formelements = html_writer::label(get_string('testresult', 'local_fitcheck'), 'result') .
+        html_writer::tag('input', '', [
+            'type' => 'number',
+            'name' => 'result',
+            'id' => 'result',
+            'placeholder' => $placeholder,
+            'class' => 'mb-4 form-control w-25',
+            'required' => '',
+            'step' => 0.01
+            ]);
+}
+$editurl = new moodle_url('/local/fitcheck/settings/edittests.php', ['id' => $id]);
+$editbutton = '';
+if (has_capability('local/fitcheck:edittests', $PAGE->context)) {
+    $editbutton = html_writer::tag('a', get_string('gototestsettings', 'local_fitcheck'), ['href' => $editurl, 'class' => 'btn btn-secondary mr-1']);
+}
+$formelements .= html_writer::label(get_string('checkresult', 'local_fitcheck'), 'checkresult') . '<br>' .
+    html_writer::checkbox('checkresult', 1, false, '', ['class' => 'mb-4', 'required' => '']) . '<br>' .
+    html_writer::tag('button', get_string('submit', 'local_fitcheck'), ['type' => 'submit', 'class' => 'btn btn-primary mr-1']) .
+    $editbutton .
+    html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'), ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
+$form = html_writer::tag('form', $formelements, ['action' => $urlwithsess, 'method' => 'post', 'class' => 'fitcheck-resultform']);
+
+// Output page.
+echo $OUTPUT->header();
+echo html_writer::div($html, 'fitcheck-test');
+echo html_writer::script('
+    function averageCalc() {
+        var x = Number(document.getElementById("result1").value);
+        var y = Number(document.getElementById("result2").value);
+        if (x != 0 && y != 0) {
+            document.getElementById("result").value = (x + y) / 2;
+        }
+    }
+
+    function minusCalc() {
+        var x = Number(document.getElementById("result1").value);
+        var y = Number(document.getElementById("result2").value);
+        if (x != 0 && y != 0) {
+            document.getElementById("result").value = x - y;
+        }
+    }
+');
+if ($video) {
+    echo $video;
+}
+if (!has_capability('local/fitcheck:edittests', context_system::instance())) {
+    echo $form;
+} else {
+    echo '<br>' . $editbutton;
+}
+echo $OUTPUT->footer();

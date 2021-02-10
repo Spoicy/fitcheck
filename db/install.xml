@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/fitcheck/db" VERSION="20210125" COMMENT="XMLDB file for Moodle local/fitcheck"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_fitcheck_results" COMMENT="Results DB for FitCheck">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="result" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Contains array of results, e.g. [8.5, 6.75]"/>
+        <FIELD NAME="testid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the given test."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ID of the user taking the test."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="testid" TYPE="foreign" FIELDS="testid" REFTABLE="local_fitcheck_tests" REFFIELDS="id" COMMENT="Key for testid."/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="Key for the user id."/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_fitcheck_tests" COMMENT="Tests DB for FitCheck">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="The status of the test. Can be active or disabled."/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The full name of the test."/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The short name of the test."/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Description of the test with HTML formatting."/>
+        <FIELD NAME="video" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Link to the video."/>
+        <FIELD NAME="thumbnail" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Thumbail for the test"/>
+        <FIELD NAME="resulttype1" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The first result type. Can be used standalone or in conjunction with the second result type, which will be used to output an average."/>
+        <FIELD NAME="resulttype2" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The second result type. Will often be NULL as it is optional."/>
+        <FIELD NAME="gender" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Gender for catered tests, 1 = Men/Unisex, 2 = Women"/>
+        <FIELD NAME="minmax" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="This field determines the grading style of the test."/>
+        <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="The grading method for the test."/>
+        <FIELD NAME="maxresult" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="3" COMMENT="This field is for the calculation of the grade, which is linear."/>
+        <FIELD NAME="minresult" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="3" COMMENT="The minimum result of the test."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_fitcheck_users" COMMENT="Student information for classes.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User-ID to identify the user's preference"/>
+        <FIELD NAME="classid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The student's class id."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="The key for userid."/>
+        <KEY NAME="classid" TYPE="foreign" FIELDS="classid" REFTABLE="local_fitcheck_classes" REFFIELDS="id" COMMENT="The foreign key for the class id."/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_fitcheck_classes" COMMENT="Classes of students to organize the results for the teacher.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Name of the class. Editable by teachers"/>
+        <FIELD NAME="gender" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Gender for the class."/>
+        <FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The ID of the teacher of the class"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="teacherid" TYPE="foreign" FIELDS="teacherid" REFTABLE="user" REFFIELDS="id" COMMENT="The key for teacherid"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

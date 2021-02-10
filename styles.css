@@ -1,0 +1,84 @@
+.fitcheck-test p img {
+    max-width: 75% !important;
+    height: auto !important;
+    margin-bottom: .25rem;
+}
+
+.fitcheck-resultform label {
+    font-weight: 500 !important;
+}
+
+.fitcheck-classtable #assignedcell,
+.fitcheck-classtable #unassignedcell {
+    width: 42%;
+}
+
+.fitcheck-classtable #buttonscell {
+    width: 16%;
+}
+
+.fitcheck-classtable td {
+    vertical-align: top;
+    padding: .2em .3em;
+}
+
+.fitcheck-classtable tr {
+    background-color: rgba(0,0,0,.05);
+}
+
+.fitcheck-classtable p {
+    margin: .2em 0;
+}
+
+.fitcheck-classform .form-group {
+    margin-left: .3em;
+}
+
+.fitcheck-classform .label-classname,
+.fitcheck-classform .label-classgender,
+.fitcheck-classform .label-classteacher {
+    padding-left: 0;
+}
+
+.thumbnail-empty {
+    position: relative;
+    background-color: #DDD;
+}
+
+.thumbnail-empty img {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    position: absolute;
+    height: 0;
+}
+
+.card-body span {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.gradetable {
+    margin: auto;
+}
+
+.gradetable th {
+    min-width: 80px;
+}
+
+.gradetable td {
+    min-width: 150px;
+}
+
+.gradetable,
+.gradetable td,
+.gradetable th {
+    border: 1px solid #8f959e;
+}
+
+#gradeselect {
+    display: flex;
+    margin: auto;
+}
