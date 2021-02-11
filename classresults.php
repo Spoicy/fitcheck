@@ -143,28 +143,30 @@ if ($view != 0) {
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=studentfirstname&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
             unset($tableheaders[0]);
-            $sqlsort = "fullname $dir";
+            $sqlsort = "ORDER BY u.lastname $dir";
             break;
         case "studentlastname":
             $studentlastname = html_writer::tag('a', get_string('liststudentlastname', 'local_fitcheck'),
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=studentlastname&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
             unset($tableheaders[1]);
-            $sqlsort = "gender $dir";
+            $sqlsort = "ORDER BY u.firstname $dir";
             break;
         case "result":
             $result = html_writer::tag('a', get_string('listresult', 'local_fitcheck'),
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=result&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
             unset($tableheaders[2]);
-            $sqlsort = "result $dir";
+            $sqlsort = '';
+            $resultsort = $dir;
             break;
         case "grade":
             $grade = html_writer::tag('a', get_string('listgrade', 'local_fitcheck'),
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=grade&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
-            unset($tableheaders[2]);
-            $sqlsort = "grade $dir";
+            unset($tableheaders[3]);
+            $sqlsort = '';
+            $gradesort = $dir;
             break;
         default:
             $sqlsort = '';
@@ -184,21 +186,22 @@ if ($view != 0) {
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=studentfirstname&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
             unset($tableheaders[0]);
-            $sqlsort = "fullname $dir";
+            $sqlsort = "ORDER BY u.firstname $dir";
             break;
         case "studentlastname":
             $studentlastname = html_writer::tag('a', get_string('liststudentlastname', 'local_fitcheck'),
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=studentlastname&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
             unset($tableheaders[1]);
-            $sqlsort = "gender $dir";
+            $sqlsort = "ORDER BY u.lastname $dir";
             break;
         case "grade":
             $grade = html_writer::tag('a', get_string('listgrade', 'local_fitcheck'),
                 ['href' => $PAGE->url . '?id=' . $id . '&view=' . $view . '&sort=grade&dir=' . $sortdir]) .
                 $OUTPUT->pix_icon('t/sort_' . $dir, get_string($dir), 'core', ['class' => 'iconsort']);
             unset($tableheaders[2]);
-            $sqlsort = "grade $dir";
+            $sqlsort = '';
+            $gradesort = $dir;
             break;
         default:
             $sqlsort = '';
@@ -213,6 +216,10 @@ if ($view != 0) {
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
 
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u, {local_fitcheck_users} lfu
+    WHERE classid = ' . $id .
+    ' AND u.id = lfu.userid ' . $sqlsort);
+
 // Populate table with student data and set test status to incomplete if test data doesn't exist.
 $complete = 1;
 foreach ($students as $student) {
@@ -224,12 +231,12 @@ foreach ($students as $student) {
             ['userid' => $student->userid, 'testid' => $currenttest->id, 'testnr' => $class->testnr + $student->offset]);
         if ($currresult) {
             if (isset($currresult->result) && $currresult->result != null) {
-                $row[] = $currresult->result;
+                $row['result'] = $currresult->result;
             } else {
-                $row[] = '-';
+                $row['result'] = '-';
             }
         } else {
-            $row[] = '-';
+            $row['result'] = '-';
         }
     }
 
@@ -238,12 +245,12 @@ foreach ($students as $student) {
             ['userid' => $student->userid, 'testid' => $currenttest->id, 'testnr' => $class->testnr + $student->offset]);
         if ($currresult) {
             if ($currresult->result != null) {
-                $row[] = local_fitcheck_calc_grade($currenttest, $currresult->result);
+                $row['grade'] = local_fitcheck_calc_grade($currenttest, $currresult->result);
             } else {
-                $row[] = '-';
+                $row['grade'] = '-';
             }
         } else {
-            $row[] = '-';
+            $row['grade'] = '-';
         }
     } else {
         $allresults = $DB->get_records('local_fitcheck_results',
@@ -259,10 +266,10 @@ foreach ($students as $student) {
                 }
             }
             if ($resultcount) {
-                $row[] = round($resulttotal / $resultcount, 2);
+                $row['grade'] = round($resulttotal / $resultcount, 2);
             }
         } else {
-            $row[] = '-';
+            $row['grade'] = '-';
         }
     }
     if ($complete) {
@@ -279,6 +286,18 @@ foreach ($students as $student) {
         html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
         $OUTPUT->pix_icon('t/hide', get_string('viewstudentresults', 'local_fitcheck')));
     $table->data[] = $row;
+}
+
+if (isset($gradesort)) {
+    usort($table->data, "local_fitcheck_sort_grades");
+    if ($gradesort == 'desc') {
+        $table->data = array_reverse($table->data);
+    }
+} else if (isset($resultsort)) {
+    usort($table->data, "local_fitcheck_sort_results");
+    if ($resultsort == 'desc') {
+        $table->data = array_reverse($table->data);
+    }
 }
 
 $extras = '';

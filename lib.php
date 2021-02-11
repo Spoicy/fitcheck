@@ -365,3 +365,27 @@ function local_fitcheck_calc_grade($test, $data) {
     }
     return round($calcresult, 2);
 }
+
+/**
+ * Sort function for grades and results in class results
+ *
+ */
+
+function local_fitcheck_sort_grades($a, $b) {
+    if ($a['grade'] == $b['grade']) {
+        return 0;
+    }
+    return ($a['grade'] < $b['grade']) ? -1 : 1;
+}
+
+/**
+ * Sort function for grades and results in class results
+ *
+ */
+
+function local_fitcheck_sort_results($a, $b) {
+    if ($a['result'] == $b['result']) {
+        return 0;
+    }
+    return ($a['result'] < $b['result']) ? -1 : 1;
+}
