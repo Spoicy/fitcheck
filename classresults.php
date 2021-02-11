@@ -246,7 +246,24 @@ foreach ($students as $student) {
             $row[] = '-';
         }
     } else {
-
+        $allresults = $DB->get_records('local_fitcheck_results',
+            ['userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
+        $resulttotal = 0;
+        $resultcount = 0;
+        if (count($allresults)) {
+            foreach ($allresults as $allresult) {
+                if ($allresult->result != null) {
+                    $currenttest = $DB->get_record('local_fitcheck_tests', ['id' => $allresult->testid]);
+                    $resulttotal += local_fitcheck_calc_grade($currenttest, $allresult->result);
+                    $resultcount++;
+                }
+            }
+            if ($resultcount) {
+                $row[] = round($resulttotal / $resultcount, 2);
+            }
+        } else {
+            $row[] = '-';
+        }
     }
     if ($complete) {
         foreach ($tests as $test) {
