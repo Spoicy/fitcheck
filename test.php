@@ -51,10 +51,13 @@ $returnurl = new moodle_url('/local/fitcheck');
 $urlwithsess = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
 
 if ($result && $result >= 0) {
+    $student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
+    $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
     $resulttoadd = new stdClass();
     $resulttoadd->result = $result;
     $resulttoadd->testid = $id;
-    $resulttoadd->userid = $USER->id;
+    $resulttoadd->userid = $student->userid;
+    $resulttoadd->testnr = $class->testnr + $student->offset;
     require_sesskey();
     $DB->insert_record('local_fitcheck_results', $resulttoadd);
     redirect($returnurl);

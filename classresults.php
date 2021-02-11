@@ -220,10 +220,10 @@ foreach ($students as $student) {
     $row[] = "$student->firstname $student->lastname";
 
     if (isset($result)) {
-        $results = $DB->get_records('local_fitcheck_results', ['userid' => $student->id, 'testid' => $currenttest->id], 'id DESC');
-        if (count($results)) {
-            $currresult = array_shift($results);
-            if (isset($currresult->result) && ($currresult->result != null || $currresult->result != '')) {
+        $currresult = $DB->get_record('local_fitcheck_results',
+            ['userid' => $student->userid, 'testid' => $currenttest->id, 'testnr' => $class->testnr + $student->offset]);
+        if ($currresult) {
+            if (isset($currresult->result) && $currresult->result != null) {
                 $row[] = $currresult->result;
             } else {
                 $row[] = '-';
@@ -234,10 +234,10 @@ foreach ($students as $student) {
     }
 
     if ($currenttest->id != 0 && isset($currenttest)) {
-        $results = $DB->get_records('local_fitcheck_results', ['userid' => $student->id, 'testid' => $currenttest->id], 'id DESC');
-        if (count($results)) {
-            $currresult = array_shift($results);
-            if ($currresult->result != null || $currresult->result != '') {
+        $currresult = $DB->get_record('local_fitcheck_results',
+            ['userid' => $student->userid, 'testid' => $currenttest->id, 'testnr' => $class->testnr + $student->offset]);
+        if ($currresult) {
+            if ($currresult->result != null) {
                 $row[] = local_fitcheck_calc_grade($currenttest, $currresult->result);
             } else {
                 $row[] = '-';
