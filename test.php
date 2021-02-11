@@ -169,9 +169,22 @@ echo html_writer::script('
 if ($video) {
     echo $video;
 }
-if (!has_capability('local/fitcheck:edittests', context_system::instance())) {
+
+$student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
+$resulttocheck = null;
+if ($student) {
+    $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
+    if ($class && $class->testnr + $student->offset) {
+        $resulttocheck = $DB->get_record('local_fitcheck_results',
+            ['testid' => $test->id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
+    }
+}
+
+if (!has_capability('local/fitcheck:edittests', context_system::instance()) && !$resulttocheck) {
     echo $form;
-} else {
+} else if (has_capability('local/fitcheck:edittests', context_system::instance())) {
     echo '<br>' . $editbutton;
+} else if ($resulttocheck) {
+    echo html_writer::tag('p', get_string('alreadysubmittedresult', 'local_fitcheck'));
 }
 echo $OUTPUT->footer();

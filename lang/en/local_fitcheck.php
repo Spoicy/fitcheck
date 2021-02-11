@@ -133,6 +133,10 @@ $string['testnumber'] = 'Test #{$a}';
 $string['complete'] = 'Status: Complete';
 $string['incomplete'] = 'Status: Incomplete';
 $string['startnewtest'] = 'Start a new test';
+$string['alreadysubmittedresult'] = 'You have already submitted a result for this test.';
+$string['confirmstartnewtest'] = 'Start a new test?';
+$string['confirmstartnewtestfull'] = 'Are you sure you want to start a new test? The current test is incomplete, and will no longer be able to accept results if a new one is started.';
+$string['starttest'] = 'Start test';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

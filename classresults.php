@@ -32,8 +32,9 @@ $sort = optional_param('sort', '', PARAM_TEXT);
 $dir = optional_param('dir', '', PARAM_TEXT);
 $view = optional_param('view', 0, PARAM_INT);
 $newtest = optional_param('newtest', false, PARAM_BOOL);
+$newtestconfirm = optional_param('newtestconfirm', '', PARAM_ALPHANUM);
 
-$PAGE->set_url(new moodle_url('/local/fitcheck/classresults.php'));
+$PAGE->set_url(new moodle_url('/local/fitcheck/classresults.php?id=' . $id));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('title', 'local_fitcheck') . ' - ' . get_string('classresults', 'local_fitcheck'));
@@ -41,20 +42,74 @@ $PAGE->set_heading(get_string('title', 'local_fitcheck'));
 $PAGE->navbar->add('FitCheck');
 $PAGE->navbar->add(get_string('classresults', 'local_fitcheck'));
 
+// Set direction for selected option.
 if ($dir == 'asc') {
     $sortdir = 'desc';
 } else {
     $sortdir = 'asc';
 }
 
+// Fetch class and tests from DB.
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
 
-if ($newtest) {
-    $class->testnr++;
-    $DB->update_record('local_fitcheck_classes', $class);
+// Fetch students.
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u, {local_fitcheck_users} lfu
+    WHERE classid = ' . $id .
+    ' AND u.id = lfu.userid');
+$completecheck = 1;
+
+// Increase the test number if new test is pressed.
+if ($newtest || $newtestconfirm) {
+    foreach ($tests as $test) {
+        foreach ($students as $student) {
+            $resulttocheck = $DB->get_record('local_fitcheck_results',
+                ['testid' => $test->id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
+            if (!$resulttocheck) {
+                $completecheck = 0;
+            }
+        }
+    }
+    if ($completecheck) {
+        $class->testnr++;
+        $DB->update_record('local_fitcheck_classes', $class);
+    } else {
+        if ($newtestconfirm != md5($newtest)) {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(get_string('confirmstartnewtest', 'local_fitcheck'));
+    
+            $optionsyes = array('newtest'=>$newtest, 'newtestconfirm'=>md5($newtest), 'sesskey'=>sesskey());
+            $returnurl = new moodle_url('/local/fitcheck/classresults.php?id=' . $id);
+            $deleteurl = new moodle_url($returnurl, $optionsyes);
+            $deletebutton = new single_button($deleteurl, get_string('starttest', 'local_fitcheck'), 'post');
+    
+            echo $OUTPUT->confirm(get_string('confirmstartnewtestfull', 'local_fitcheck'), $deletebutton, $returnurl);
+            echo $OUTPUT->footer();
+            die;
+        } else {
+            foreach ($tests as $test) {
+                foreach ($students as $student) {
+                    $resulttocheck = $DB->get_record('local_fitcheck_results',
+                        ['testid' => $test->id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
+                    if (!$resulttocheck) {
+                        $newresult = new stdClass();
+                        $newresult->result = null;
+                        $newresult->testnr = $class->testnr + $student->offset;
+                        $newresult->userid = $student->userid;
+                        $newresult->testid = $test->id;
+                        $DB->insert_record('local_fitcheck_results', $newresult);
+                    }
+                }
+            }
+            $class->testnr++;
+            $DB->update_record('local_fitcheck_classes', $class);
+        }
+    }
+    
+    
 }
 
+// Create select options.
 if ($view == 0) {
     $selectoptions = html_writer::tag('option', get_string('average', 'local_fitcheck'), ['value' => 'average', 'selected' => '']);
     $currenttest = new stdClass();
@@ -74,10 +129,12 @@ foreach ($tests as $test) {
 $select = html_writer::tag('select', $selectoptions,
     ['name' => 'view', 'id' => 'view', 'class' => 'select custom-select mb-3', 'onchange' => 'selectForm.submit();']);
 
+// Setup table.
 $table = new html_table();
 $table->head = array();
 $table->colclasses = array();
 
+// Display different table layout if view is average or test.
 if ($view != 0) {
     $tableheaders = array('studentfirstname', 'studentlastname', 'result', 'grade');
     switch ($sort) {
@@ -153,16 +210,11 @@ if ($view != 0) {
     $table->head[] = $studentfirstname . ' / ' . $studentlastname;
     $table->head[] = $grade;
 }
-
-$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset FROM {user} u, {local_fitcheck_users} lfu
-    WHERE classid = ' . $id .
-    ' AND u.id = lfu.userid');
-
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
 
+// Populate table with student data and set test status to incomplete if test data doesn't exist.
 $complete = 1;
-
 foreach ($students as $student) {
     $row = array();
     $row[] = "$student->firstname $student->lastname";
@@ -198,9 +250,9 @@ foreach ($students as $student) {
     }
     if ($complete) {
         foreach ($tests as $test) {
-            $testresult = $DB->get_records('local_fitcheck_results',
-                ['userid' => $student->id, 'testid' => $test->id, 'testnr' => $class->testnr + $student->offset]);
-            if (!count($testresult) || $testresult->result == null) {
+            $testresult = $DB->get_record('local_fitcheck_results',
+                ['userid' => $student->userid, 'testid' => $test->id, 'testnr' => $class->testnr + $student->offset]);
+            if (!$testresult || $testresult->result == null) {
                 $complete = 0;
             }
         }
