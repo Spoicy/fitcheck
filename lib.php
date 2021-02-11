@@ -342,6 +342,9 @@ function local_fitcheck_load_classform($class) {
  */
 
 function local_fitcheck_calc_grade($test, $data) {
+    if ($data == 'null') {
+        return 'null';
+    }
     if ($test->method != 2) {
         if ($test->minmax) {
             $calcresult = ((($test->maxresult - $test->minresult) - ($data - $test->minresult)) / ($test->maxresult - $test->minresult)) * 5 + 1;

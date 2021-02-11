@@ -61,20 +61,18 @@ foreach ($tests as $test) {
     $testidslabels[$test->id] = $test->shortname;
 }
 foreach ($results as $result) {
-    $testids[$result->testid][] += $result->result;
+    if ($result->result == null) {
+        array_push($testids[$result->testid], 'null');
+    } else {
+        array_push($testids[$result->testid], $result->result);
+    }
 }
 
 // Fetch highest and lowest test count.
-$lowest = -1;
-$highest = 0;
-foreach ($testids as $test) {
-    if (count($test) <= $lowest || $lowest == -1) {
-        $lowest = count($test);
-    }
-    if (count($test) > $highest) {
-        $highest = count($test);
-    }
-}
+$highestsort = $DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results}
+    WHERE userid = ' . $userid . ' ORDER BY testnr DESC');
+$highest = array_shift($highestsort)->testnr;
+$lowest = 1;
 
 // Set which tests to display, max of 3.
 if ($highest > $lowest + 2) {
@@ -101,22 +99,18 @@ foreach ($testids as $key => $test) {
 foreach ($tests as $test) {
     $newtestdata = [];
     foreach ($testdata[$test->id] as $data) {
-        $newtestdata[] += local_fitcheck_calc_grade($test, $data);
+        $newtestdata[] = local_fitcheck_calc_grade($test, $data);
     }
     $testdata[$test->id] = $newtestdata;
 }
 
 // Prepare series string for ZingChart.
 $series = '';
-for ($i = 0; $i < 3; $i++) {
+for ($i = 0; $i < $highest - $lowest + 1; $i++) {
     $series .= '{ values: ';
     $datastring = '[';
     foreach ($testdata as $key => $data) {
-        if (array_key_exists($i, $data)) {
-            $datastring .= $data[$i] . ',';
-        } else {
-            $datastring .= 'null,';
-        }
+        $datastring .= $data[$i] . ',';
     }
     $datastring .= ']';
     $series .= $datastring . ', text: \'' . get_string('testnumber', 'local_fitcheck', $lowest + $i) . '\'},';
