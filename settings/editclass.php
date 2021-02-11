@@ -104,6 +104,19 @@ if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_
 if (optional_param('remove', false, PARAM_BOOL) && $assignedstudentid && confirm_sesskey()) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $assignedstudentid]);
     $student->classid = null;
+    $teststocheck = $DB->get_records('local_fitcheck_tests', ['gender' => $class->gender, 'status' => 1]);
+    foreach ($teststocheck as $test) {
+        $resulttocheck = $DB->get_record('local_fitcheck_results',
+            ['testnr' => $class->testnr + $student->offset, 'userid' => $student->userid, 'testid' => $test->id]);
+        if (!$resulttocheck) {
+            $newresult = new stdClass();
+            $newresult->result = null;
+            $newresult->testnr = $class->testnr + $student->offset;
+            $newresult->testid = $test->id;
+            $newresult->userid = $student->userid;
+            $DB->insert_record('local_fitcheck_results', $newresult);
+        }
+    }
     $DB->update_record('local_fitcheck_users', $student);
 }
 
