@@ -367,7 +367,7 @@ function local_fitcheck_calc_grade($test, $data) {
 }
 
 /**
- * Sort function for grades and results in class results
+ * Sort function for grades in class results
  *
  */
 
@@ -379,7 +379,7 @@ function local_fitcheck_sort_grades($a, $b) {
 }
 
 /**
- * Sort function for grades and results in class results
+ * Sort function for results in class results
  *
  */
 

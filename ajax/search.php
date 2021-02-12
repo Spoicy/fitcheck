@@ -15,13 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing a FitCheck test
+ * Student search in edit class view
  *
  * @copyright 2021 Jae Funke
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package local_fitcheck
  */
-
 
 define('AJAX_SCRIPT', true);
 

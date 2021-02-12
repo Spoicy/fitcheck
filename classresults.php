@@ -323,6 +323,11 @@ if ($class->testnr) {
     $testdiv = html_writer::tag('h2', get_string('testnumbernone', 'local_fitcheck'));
 }
 
+$printbutton = html_writer::tag('a', get_string('printresults', 'local_fitcheck'),
+    ['name' => 'printpdf', 'id' => 'printpdf',
+        'href' => new moodle_url('/local/fitcheck/classpdf.php', ['classid' => $class->id, 'testnr' => $class->testnr]),
+        'class' => 'btn btn-secondary float-right']);
+
 $newtestbutton = html_writer::tag('button', get_string('startnewtest', 'local_fitcheck'),
     ['name' => 'newtest', 'id' => 'newtest', 'type' => 'submit', 'class' => 'btn btn-secondary float-right', 'value' => 1]);
 
@@ -332,6 +337,7 @@ $hidinputs = html_writer::tag('input', '', ['value' => $sort, 'name' => 'sort', 
 
 echo $OUTPUT->header();
 echo $testdiv;
-echo html_writer::tag('form', $select . $hidinputs . $newtestbutton, ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
+echo html_writer::tag('form', $select . $hidinputs . $newtestbutton . $printbutton,
+    ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
 echo html_writer::table($table);
 echo $OUTPUT->footer();

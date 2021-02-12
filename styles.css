@@ -86,3 +86,16 @@
 .listtable {
     margin-top: 1.25rem;
 }
+
+.printresulttable {
+    border-collapse: collapse;
+}
+
+.printresulttable th,
+.printresulttable td {
+    border: 1px solid #000;
+}
+
+th[class*="cborderbottom-thick"] {
+    border-bottom: 2px solid #000;
+}
