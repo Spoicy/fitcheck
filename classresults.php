@@ -269,6 +269,8 @@ foreach ($students as $student) {
             }
             if ($resultcount) {
                 $row['grade'] = round($resulttotal / $resultcount, 2);
+            } else {
+                $row['grade'] = '-';
             }
         } else {
             $row['grade'] = '-';
