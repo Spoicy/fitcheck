@@ -86,8 +86,8 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
 // Add student to class.
 if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_sesskey()) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $unassignedstudentid]);
-    $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results} WHERE userid = ' . $student->id));
     if ($student) {
+        $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results} WHERE userid = ' . $student->userid));
         $student->classid = $id;
         $student->offset = $numbertests - $class->testnr;
         $DB->update_record('local_fitcheck_users', $student);
