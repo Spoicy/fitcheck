@@ -89,15 +89,17 @@ if ($newtest || $newtestconfirm) {
         } else {
             foreach ($tests as $test) {
                 foreach ($students as $student) {
-                    $resulttocheck = $DB->get_record('local_fitcheck_results',
-                        ['testid' => $test->id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
-                    if (!$resulttocheck) {
-                        $newresult = new stdClass();
-                        $newresult->result = null;
-                        $newresult->testnr = $class->testnr + $student->offset;
-                        $newresult->userid = $student->userid;
-                        $newresult->testid = $test->id;
-                        $DB->insert_record('local_fitcheck_results', $newresult);
+                    if ($class->testnr + $student->offset != 0) {
+                        $resulttocheck = $DB->get_record('local_fitcheck_results',
+                            ['testid' => $test->id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
+                        if (!$resulttocheck) {
+                            $newresult = new stdClass();
+                            $newresult->result = null;
+                            $newresult->testnr = $class->testnr + $student->offset;
+                            $newresult->userid = $student->userid;
+                            $newresult->testid = $test->id;
+                            $DB->insert_record('local_fitcheck_results', $newresult);
+                        }
                     }
                 }
             }
