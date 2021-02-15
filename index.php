@@ -102,10 +102,10 @@ foreach ($tests as $test) {
             $genderspan .
             html_writer::tag('h5', $test->fullname, ['class' => 'card-title']) .
             $buttons, 'card-body'
-        ), 'card');
+        ), 'card mt-1 mb-1');
     $cards .= $card;
     if ($i % 2 == 0 && $i != 0) {
-        $html .= html_writer::div($cards, 'card-deck mb-1');
+        $html .= html_writer::div($cards, 'card-deck');
         $cards = '';
         $i = 0;
     } else {
