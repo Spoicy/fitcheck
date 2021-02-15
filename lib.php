@@ -171,30 +171,38 @@ function local_fitcheck_load_classform($class) {
     $classselect = '';
     $remainingselect = '';
 
+    // Prepare counts.
+    $availablecount = 0;
+    $classcount = 0;
+    $remainingcount = 0;
+
     foreach ($availablestudents as $student) {
         if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
             $availableselect .= html_writer::tag('option', $student->firstname . " " .
                 $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            $availablecount++;
         }
     }
     foreach ($classstudents as $student) {
         if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
             $classselect .= html_writer::tag('option', $student->firstname . " " .
                 $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            $classcount++;
         }
     }
     foreach ($remainingstudents as $student) {
         if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
             $remainingselect .= html_writer::tag('option', $student->firstname . " " .
                 $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            $remainingcount++;
         }
     }
     $availableoptgroup = html_writer::tag('optgroup', $availableselect,
-        ['label' => get_string('unassignedcount', 'local_fitcheck', count($availablestudents))]);
+        ['label' => get_string('unassignedcount', 'local_fitcheck', $availablecount)]);
     $classoptgroup = html_writer::tag('optgroup', $classselect,
-        ['label' => get_string('assignedcount', 'local_fitcheck', count($classstudents))]);
+        ['label' => get_string('assignedcount', 'local_fitcheck', $classcount)]);
     $remainingoptgroup = html_writer::tag('optgroup', $remainingselect,
-        ['label' => get_string('alrassignedcount', 'local_fitcheck', count($remainingstudents)), 'disabled' => '']);
+        ['label' => get_string('alrassignedcount', 'local_fitcheck', $remainingcount), 'disabled' => '']);
 
     // Create table cells for the selects and buttons.
     $assignedtd = html_writer::tag('td',
