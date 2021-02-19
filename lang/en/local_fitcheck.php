@@ -139,6 +139,7 @@ $string['confirmstartnewtestfull'] = 'Are you sure you want to start a new test?
 $string['starttest'] = 'Start test';
 $string['printresults'] = 'Print results';
 $string['class'] = 'Class';
+$string['alltests'] = 'All tests';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

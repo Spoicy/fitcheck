@@ -42,6 +42,7 @@ if ($userid != $USER->id) {
 }
 
 echo html_writer::script('', 'https://cdn.zingchart.com/zingchart.min.js');
+echo html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js');
 
 $chart = html_writer::div('', 'chart--container', ['id' => 'resultsChart', 'style' => 'height:450px;']);
 $pref = 0;
@@ -53,6 +54,7 @@ $results = $DB->get_records('local_fitcheck_results', ['userid' => $userid]);
 $testnames = '';
 $testids = [];
 $testidslabels = [];
+$testidslabels[0] = get_string('alltests', 'local_fitcheck');
 
 // Sort tests and results into arrays for later processing.
 foreach ($tests as $test) {
@@ -95,13 +97,18 @@ foreach ($testids as $key => $test) {
     $testdata[$key] = array_slice($test, $lowestarrval, $highest - $lowest + 1);
 }
 
+$gradedata = [];
+$testdivs = '';
 // Calculate grades.
 foreach ($tests as $test) {
     $newtestdata = [];
     foreach ($testdata[$test->id] as $data) {
         $newtestdata[] = local_fitcheck_calc_grade($test, $data);
     }
-    $testdata[$test->id] = $newtestdata;
+    $gradedata[$test->id] = $newtestdata;
+    $testdivs .= html_writer::div(
+        html_writer::tag('canvas', 'lineChart' . $test->id, ['height' => '300', 'width' => '450']),
+        'testchart' . $test->id . ' d-none');
 }
 
 // Prepare series string for ZingChart.
@@ -109,7 +116,7 @@ $series = '';
 for ($i = 0; $i < $highest - $lowest + 1; $i++) {
     $series .= '{ values: ';
     $datastring = '[';
-    foreach ($testdata as $key => $data) {
+    foreach ($gradedata as $key => $data) {
         $datastring .= $data[$i] . ',';
     }
     $datastring .= ']';
@@ -157,13 +164,14 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
 
 // Create table and select.
 $tablecontent = html_writer::tag('tr', $testnamesheader, ) . $testgrades;
-$gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable']);
+$gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable d-none']);
 $gradeselect = html_writer::select(
     $testidslabels, 'gradeselect', $firsttestid, '', ['id' => 'gradeselect', 'onchange' => 'updateGradeTable(this)', 'class' => 'my-3']
 );
 
 // Output HTML and scripts.
 echo $OUTPUT->header();
+echo $gradeselect;
 echo $chart;
 echo html_writer::script("
 ZC.LICENSE = ['569d52cefae586f634c54f86dc99e6a9', 'b55b025e438fa8a98e32482b5f768ff5'];
@@ -226,11 +234,20 @@ zingchart.render({
     width: '100%'
 });
 ");
-echo $gradeselect;
+echo html_writer::script('
+
+');
 echo $gradetable;
 echo html_writer::script('
     function updateGradeTable(select) {
         var value = select.value;
+        if (value == 0) {
+            $("#resultsChart").removeClass("d-none");
+            $(".gradetable").addClass("d-none");
+        } else {
+            $("#resultsChart").addClass("d-none");
+            $(".gradetable").removeClass("d-none");
+        }
         var newSelect = ".gradescale-" + value;
         $(".selectcurrent").addClass("d-none").removeClass("selectcurrent");
         $(newSelect).addClass("selectcurrent").removeClass("d-none");
