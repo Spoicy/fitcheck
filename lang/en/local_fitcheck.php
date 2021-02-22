@@ -67,6 +67,7 @@ $string['gototestsettings'] = 'Edit';
 $string['gobacktomainpage'] = 'Back to main page';
 $string['testresult'] = 'Your result:';
 $string['testresultaverage'] = 'Average:';
+$string['testresultminus'] = 'Difference:';
 $string['checkresult'] = 'Check the input and confirm:';
 $string['submit'] = 'Submit result';
 $string['videoheader'] = 'Video example:';

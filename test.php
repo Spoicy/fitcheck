@@ -83,11 +83,14 @@ foreach ($files as $file) {
 // Prepare form, not using moodleform for custom styling.
 if ($test->resulttype1 && $test->resulttype2) {
     $method = '';
-    if ($test->method == 0) {
-        $method = 'averageCalc()';
-    } else if ($test->method == 1) {
+    if ($test->method == 1) {
         $method = 'minusCalc()';
+        $transstring = 'testresultminus';
+    } else {
+        $method = 'averageCalc()';
+        $transstring = 'testresultaverage';
     }
+    
 
     $formelements = html_writer::label($test->resulttype1 . ':', 'result1') .
         html_writer::tag('input', '', [
@@ -111,7 +114,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'required' => '',
             'step' => 0.01
             ]) .
-        html_writer::label(get_string('testresultaverage', 'local_fitcheck'), 'result') .
+        html_writer::label(get_string($transstring, 'local_fitcheck'), 'result') .
         html_writer::tag('input', '', [
             'type' => 'number',
             'name' => 'result',
