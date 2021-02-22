@@ -36,6 +36,19 @@ require_login();
 
 // Get the search parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
+$selectbase = 'SELECT u.id, u.username, u.firstname, u.lastname';
+$assignedsqlbase = 'FROM {user} u
+    INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id
+    INNER JOIN {local_fitcheck_classes} lfc ON lfu.classid = lfc.id
+    WHERE lfu.classid = ' . $data->classid;
+$unassignedsqlbase = 'FROM {user} u
+    WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)
+    AND u.id != ' . $data->teacherid;
+
+$alrassignedsql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u WHERE u.id NOT IN (SELECT u.id $unassignedsqlbase)" .
+" AND u.id NOT IN (SELECT u.id $assignedsqlbase) AND u.id != $data->teacherid";
+$assignedsql = "$selectbase $assignedsqlbase";
+$unassignedsql = "$selectbase $unassignedsqlbase";
 
 // Prepare counts.
 $unassignedcount = 0;
@@ -46,7 +59,7 @@ $alrassignedcount = 0;
 if ($data->search != "") {
     // Differentiate between both selects.
     if ($data->mode == 0) {
-        $assigned = $DB->get_records_sql($data->assignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+        $assigned = $DB->get_records_sql($assignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
              LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
         $assignedselect = '';
         $assignedstringvars = new stdClass();
@@ -63,9 +76,9 @@ if ($data->search != "") {
             ['label' => get_string('assignedcountmatching', 'local_fitcheck', $assignedstringvars)]);
         $output = $assignedoptgroup;
     } else {
-        $unassigned = $DB->get_records_sql($data->unassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+        $unassigned = $DB->get_records_sql($unassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
             LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
-        $alrassigned = $DB->get_records_sql($data->alrassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+        $alrassigned = $DB->get_records_sql($alrassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
             LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
         $unassignedselect = '';
         $unassignedstringvars = new stdClass();
@@ -98,7 +111,7 @@ if ($data->search != "") {
 } else {
     // Differentiate between both selects.
     if ($data->mode == 0) {
-        $assigned = $DB->get_records_sql($data->assignedsql . ' ORDER BY u.firstname');
+        $assigned = $DB->get_records_sql($assignedsql . ' ORDER BY u.firstname');
         $assignedselect = '';
         foreach ($assigned as $student) {
             if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
@@ -111,8 +124,8 @@ if ($data->search != "") {
             ['label' => get_string('assignedcount', 'local_fitcheck', $assignedcount)]);
         $output = $assignedoptgroup;
     } else {
-        $unassigned = $DB->get_records_sql($data->unassignedsql . ' ORDER BY u.firstname');
-        $alrassigned = $DB->get_records_sql($data->alrassignedsql . ' ORDER BY u.firstname');
+        $unassigned = $DB->get_records_sql($unassignedsql . ' ORDER BY u.firstname');
+        $alrassigned = $DB->get_records_sql($alrassignedsql . ' ORDER BY u.firstname');
         $unassignedselect = '';
         foreach ($unassigned as $student) {
             if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {

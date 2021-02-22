@@ -274,7 +274,8 @@ function local_fitcheck_load_classform($class) {
                 $("#assignedselect").css("background", "url('.$loading.') center center no-repeat");
                 var variables = {
                     "search": $("#assignedselect_searchtext").val(),
-                    "assignedsql": "'.$classstudentssql.'",
+                    "classid": "' . $class->id . '",
+                    "teacherid": "' . $class->teacherid . '",
                     "mode": 0
                 }
                 var data = JSON.stringify(variables);
@@ -301,8 +302,8 @@ function local_fitcheck_load_classform($class) {
                 $("#unassignedselect").css("background", "url('.$loading.') center center no-repeat");
                 var variables = {
                     "search": $("#unassignedselect_searchtext").val(),
-                    "unassignedsql": "'.$availablestudentssql.'",
-                    "alrassignedsql": "'.$remainingstudentssql.'",
+                    "classid": "' . $class->id . '",
+                    "teacherid": "' . $class->teacherid . '",
                     "mode": 1
                 }
                 var data = JSON.stringify(variables);
