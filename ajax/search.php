@@ -37,6 +37,11 @@ require_login();
 // Get the search parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
 
+// Prepare counts.
+$unassignedcount = 0;
+$assignedcount = 0;
+$alrassignedcount = 0;
+
 // Display the select differently depending on if search is empty or not.
 if ($data->search != "") {
     // Differentiate between both selects.
@@ -46,11 +51,14 @@ if ($data->search != "") {
         $assignedselect = '';
         $assignedstringvars = new stdClass();
         $assignedstringvars->search = $data->search;
-        $assignedstringvars->count = count($assigned);
         foreach ($assigned as $student) {
-            $assignedselect .= html_writer::tag('option', $student->firstname . " " .
-                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+                $assignedselect .= html_writer::tag('option', $student->firstname . " " .
+                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                $assignedcount++;
+            }
         }
+        $assignedstringvars->count = $assignedcount;
         $assignedoptgroup = html_writer::tag('optgroup', $assignedselect,
             ['label' => get_string('assignedcountmatching', 'local_fitcheck', $assignedstringvars)]);
         $output = $assignedoptgroup;
@@ -62,21 +70,27 @@ if ($data->search != "") {
         $unassignedselect = '';
         $unassignedstringvars = new stdClass();
         $unassignedstringvars->search = $data->search;
-        $unassignedstringvars->count = count($unassigned);
         foreach ($unassigned as $student) {
-            $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+                $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                $unassignedcount++;
+            }
         }
+        $unassignedstringvars->count = $unassignedcount;
         $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
             ['label' => get_string('unassignedcountmatching', 'local_fitcheck', $unassignedstringvars)]);
         $alrassignedselect = '';
         $alrassignedstringvars = new stdClass();
         $alrassignedstringvars->search = $data->search;
-        $alrassignedstringvars->count = count($alrassigned);
         foreach ($alrassigned as $student) {
-            $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+                $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                $alrassignedcount++;
+            }
         }
+        $alrassignedstringvars->count = $alrassignedcount;
         $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
             ['label' => get_string('alrassignedcountmatching', 'local_fitcheck', $alrassignedstringvars)]);
         $output = $unassignedoptgroup . $alrassignedoptgroup;
@@ -87,28 +101,37 @@ if ($data->search != "") {
         $assigned = $DB->get_records_sql($data->assignedsql . ' ORDER BY u.firstname');
         $assignedselect = '';
         foreach ($assigned as $student) {
-            $assignedselect .= html_writer::tag('option', $student->firstname . " " .
-                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+                $assignedselect .= html_writer::tag('option', $student->firstname . " " .
+                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                $assignedcount++;
+            }
         }
         $assignedoptgroup = html_writer::tag('optgroup', $assignedselect,
-            ['label' => get_string('assignedcount', 'local_fitcheck', count($assigned))]);
+            ['label' => get_string('assignedcount', 'local_fitcheck', $assignedcount)]);
         $output = $assignedoptgroup;
     } else {
         $unassigned = $DB->get_records_sql($data->unassignedsql . ' ORDER BY u.firstname');
         $alrassigned = $DB->get_records_sql($data->alrassignedsql . ' ORDER BY u.firstname');
         $unassignedselect = '';
         foreach ($unassigned as $student) {
-            $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+                $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                $unassignedcount++;
+            }
         }
         $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
-            ['label' => get_string('unassignedcount', 'local_fitcheck', count($unassigned))]);
+            ['label' => get_string('unassignedcount', 'local_fitcheck', $unassignedcount)]);
         foreach ($alrassigned as $student) {
-            $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+                $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                $alrassignedcount++;
+            }
         }
         $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
-            ['label' => get_string('alrassignedcount', 'local_fitcheck', count($alrassigned))]);
+            ['label' => get_string('alrassignedcount', 'local_fitcheck', $alrassignedcount)]);
         $output = $unassignedoptgroup . $alrassignedoptgroup;
     }
 }
