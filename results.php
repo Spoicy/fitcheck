@@ -41,9 +41,6 @@ if ($userid != $USER->id) {
     require_capability('local/fitcheck:viewallresults', context_system::instance());
 }
 
-echo html_writer::script('', 'https://cdn.zingchart.com/zingchart.min.js');
-echo html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js');
-
 $chart = html_writer::div('', 'chart--container', ['id' => 'resultsChart', 'style' => 'height:450px;']);
 $pref = 0;
 
@@ -98,17 +95,44 @@ foreach ($testids as $key => $test) {
 }
 
 $gradedata = [];
-$testdivs = '';
+$testcanvas = '';
+$canvasjs = '';
+$counttests = '';
+$canvasoptions = "{legend: { display: false }}";
 // Calculate grades.
 foreach ($tests as $test) {
     $newtestdata = [];
+    $encodedtestdata = [];
     foreach ($testdata[$test->id] as $data) {
         $newtestdata[] = local_fitcheck_calc_grade($test, $data);
+        if ($data == "null") {
+            $encodedtestdata[] = null;
+        } else {
+            $encodedtestdata[] = $data;
+        }
     }
     $gradedata[$test->id] = $newtestdata;
-    $testdivs .= html_writer::div(
-        html_writer::tag('canvas', 'lineChart' . $test->id, ['height' => '300', 'width' => '450']),
-        'testchart' . $test->id . ' d-none');
+    $testcanvas .= html_writer::div(
+        html_writer::tag('canvas', '', ['height' => '300', 'width' => '450', 'id' => 'lineChart' . $test->id]),
+        'testchart-' . $test->id . ' d-none');
+    $counttests .= 'var test' . $test->id . ' = {labels: [';
+    for ($i = 1; $i <= count($testdata[$test->id]); $i++) {
+        $counttests .= '\'' . $i . '. Test\',';
+    }
+    $counttests .= '],
+        datasets: [
+            {
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#00979f",
+                pointHighlightFill: "#00979f",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: ' . json_encode($encodedtestdata) . '
+            }
+        ]};
+        ';
+    $canvasjs .= "new Chart(document.getElementById(\"lineChart" . $test->id . "\").getContext(\"2d\"), {type: 'line', data: test$test->id, options: $canvasoptions});";
 }
 
 // Prepare series string for ZingChart.
@@ -164,13 +188,15 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
 
 // Create table and select.
 $tablecontent = html_writer::tag('tr', $testnamesheader, ) . $testgrades;
-$gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable d-none']);
+$gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable']);
 $gradeselect = html_writer::select(
     $testidslabels, 'gradeselect', $firsttestid, '', ['id' => 'gradeselect', 'onchange' => 'updateGradeTable(this)', 'class' => 'my-3']
 );
 
 // Output HTML and scripts.
 echo $OUTPUT->header();
+echo html_writer::script('', 'https://cdn.zingchart.com/zingchart.min.js');
+echo html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js');
 echo $gradeselect;
 echo $chart;
 echo html_writer::script("
@@ -234,23 +260,25 @@ zingchart.render({
     width: '100%'
 });
 ");
-echo html_writer::script('
-
-');
-echo $gradetable;
-echo html_writer::script('
-    function updateGradeTable(select) {
+echo html_writer::div(html_writer::div($testcanvas, 'col-lg-8') .
+    html_writer::div($gradetable, 'col-lg-4 gradetable-container d-none my-auto'), 'row');
+echo html_writer::script('' . $counttests . $canvasjs . '' .
+    'function updateGradeTable(select) {
         var value = select.value;
+
         if (value == 0) {
             $("#resultsChart").removeClass("d-none");
-            $(".gradetable").addClass("d-none");
+            $(".gradetable-container").addClass("d-none");
         } else {
             $("#resultsChart").addClass("d-none");
-            $(".gradetable").removeClass("d-none");
+            $(".gradetable-container").removeClass("d-none");
         }
         var newSelect = ".gradescale-" + value;
+        var newCanvas = ".testchart-" + value;
         $(".selectcurrent").addClass("d-none").removeClass("selectcurrent");
+        $(".canvascurrent").addClass("d-none").removeClass("canvascurrent");
         $(newSelect).addClass("selectcurrent").removeClass("d-none");
+        $(newCanvas).addClass("canvascurrent").removeClass("d-none");
         console.log("ye?");
         $
     }
