@@ -34,9 +34,7 @@
     margin-left: .3em;
 }
 
-.fitcheck-classform .label-classname,
-.fitcheck-classform .label-classgender,
-.fitcheck-classform .label-classteacher {
+.fitcheck-classform div[class*="label-class"] {
     padding-left: 0;
 }
 

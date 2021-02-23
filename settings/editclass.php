@@ -60,6 +60,8 @@ if ($id != -1) {
 // Get params.
 $classname = optional_param('classname', '', PARAM_TEXT);
 $classgender = optional_param('classgender', -1, PARAM_INT);
+$classagegroup = optional_param('classagegroup', '', PARAM_TEXT);
+$classendyear = optional_param('classendyear', -1, PARAM_INT);
 $unassignedstudentid = optional_param('unassignedselect', 0, PARAM_INT);
 $assignedstudentid = optional_param('assignedselect', 0, PARAM_INT);
 if (isset($class->gender)) {
@@ -72,10 +74,21 @@ if (isset($class->gender)) {
 if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender != -1 && confirm_sesskey()) {
     $class->name = $classname;
     $class->gender = $classgender;
+    $class->agegroup = $classagegroup;
+    $class->endyear = $classendyear;
+    if (preg_match('/^[0-9]{4}\/[0-9]{2}$|^[0-9]{4}\/[0-9]{4}$/', $class->agegroup)) {
+        $class->agegroup = str_replace('/', '', $class->agegroup);
+    } else {
+        print_error('agegrouperror', 'local_fitcheck');
+    }
+    if (!$class->endyear < 9999 && !$class->endyear >= 1000) {
+        print_error('endyearerror', 'local_fitcheck');
+    }
     if ($class->id == -1) {
         unset($class->id);
         $class->teacherid = $USER->id;
         $class->testnr = 0;
+        $class->status = 1;
         $id = $DB->insert_record('local_fitcheck_classes', $class);
         redirect('/local/fitcheck/settings/editclass.php?id=' . $id);
     } else {
@@ -120,6 +133,12 @@ if (optional_param('remove', false, PARAM_BOOL) && $assignedstudentid && confirm
     $DB->update_record('local_fitcheck_users', $student);
 }
 
+if ($class->agegroup) {
+    $agegroup = substr($class->agegroup, 0, 4) . '/' . substr($class->agegroup, 4, 2);
+} else {
+    $agegroup = '';
+}
+
 // Display teacher name if class exists in database.
 $teacherdiv = '';
 if ($class->id > 0) {
@@ -151,6 +170,26 @@ $classinfoform = html_writer::div(
                 get_string('maleunisex', 'local_fitcheck'),
                 get_string('female', 'local_fitcheck')
             ], 'classgender', $defaultselectgender, '', ['id' => 'classgender', 'class' => 'form-control', 'required' => '']),
+            'col-md-9 form-inline'), 'form-group row') .
+    html_writer::div(
+        html_writer::div(html_writer::label(get_string('classagegroup', 'local_fitcheck') . ': ', 'classagegroup'),
+            'col-md-3 col-form-label d-flex label-classagegroup') .
+        html_writer::div(
+            html_writer::tag('input', '', [
+                'type' => 'text', 'id' => 'classagegroup', 'name' => 'classagegroup',
+                'class' => 'form-control', 'size' => '10', 'required' => '', 'value' => $agegroup,
+                'placeholder' => get_string('classagegroupexample', 'local_fitcheck')
+            ]),
+            'col-md-9 form-inline'), 'form-group row') .
+    html_writer::div(
+        html_writer::div(html_writer::label(get_string('classendyear', 'local_fitcheck') . ': ', 'classendyear'),
+            'col-md-3 col-form-label d-flex label-classendyear') .
+        html_writer::div(
+            html_writer::tag('input', '', [
+                'type' => 'text', 'id' => 'classendyear', 'name' => 'classendyear',
+                'class' => 'form-control', 'size' => '10', 'required' => '', 'value' => $class->endyear,
+                'placeholder' => get_string('classendyearexample', 'local_fitcheck')
+            ]),
             'col-md-9 form-inline'), 'form-group row') .
     $teacherdiv .
     html_writer::div(
