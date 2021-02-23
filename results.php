@@ -98,7 +98,7 @@ $gradedata = [];
 $testcanvas = '';
 $canvasjs = '';
 $counttests = '';
-$canvasoptions = "{legend: { display: false }}";
+$canvasoptions = "{ legend: { display: false }, scales: { yAxes: [{ ticks: { maxTicksLimit: 6 } }] } }";
 // Calculate grades.
 foreach ($tests as $test) {
     $newtestdata = [];
