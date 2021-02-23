@@ -32,9 +32,9 @@ $sort = optional_param('sort', '', PARAM_TEXT);
 $dir = optional_param('dir', '', PARAM_TEXT);
 
 if (has_capability('local/fitcheck:deleteusers', context_system::instance())) {
-    $conditions = null;
+    $conditions = ['status' => 1];
 } else if (has_capability('local/fitcheck:editclasses', context_system::instance())) {
-    $conditions = ['teacherid' => $USER->id];
+    $conditions = ['teacherid' => $USER->id, 'status' => 1];
 } else {
     print_error('accessdenied', 'admin');
 }
@@ -91,14 +91,14 @@ switch ($sort) {
 }
 // If sorting by teacher, prepare classes SQL differently.
 if (isset($teachersort)) {
-    if ($conditions) {
-        $conditions = 'AND lfc.' . array_key_first($conditions) . ' = ' . $conditions[0] . ' ';
+    if (array_key_first($conditions) != 'status') {
+        $conditions = 'AND lfc.' . array_key_first($conditions) . ' = ' . $conditions[0];
     } else {
         $conditions = '';
     }
     $classes = $DB->get_records_sql('SELECT lfc.id, lfc.name, lfc.gender, lfc.teacherid, u.firstname
         FROM {local_fitcheck_classes} lfc, {user} u
-        WHERE u.id = lfc.teacherid ' . $conditions . '
+        WHERE u.id = lfc.teacherid AND lfc.status = 1 ' . $conditions . '
         ORDER BY u.' . $sortname . ' ' . $dir);
 } else {
     $classes = $DB->get_records('local_fitcheck_classes', $conditions, $sqlsort);
@@ -109,7 +109,7 @@ foreach ($tableheaders as $tableheader) {
 }
 
 // Set page heading differently if in teacher view.
-if ($conditions) {
+if ((is_array($conditions) && array_key_first($conditions) != 'status')) {
     $heading = html_writer::tag('h2', get_string('classamountforteacher', 'local_fitcheck', count($classes)));
     $teacher = get_string('listteacher', 'local_fitcheck');
 } else {
