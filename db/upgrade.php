@@ -38,4 +38,32 @@ function xmldb_local_fitcheck_upgrade($oldversion) {
         // Fitcheck savepoint reached.
         upgrade_plugin_savepoint(true, 2021022300, 'local', 'fitcheck');
     }
+
+    if ($oldversion < 2021022301) {
+
+        // Define field status to be added to local_fitcheck_classes.
+        $table = new xmldb_table('local_fitcheck_classes');
+        $statusfield = new xmldb_field('status', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'id');
+        $agegroupfield = new xmldb_field('agegroup', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'testnr');
+        $endyearfield = new xmldb_field('endyear', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'agegroup');
+
+        // Conditionally launch add field status.
+        if (!$dbman->field_exists($table, $statusfield)) {
+            $dbman->add_field($table, $statusfield);
+        }
+
+        // Conditionally launch add field agegroup.
+        if (!$dbman->field_exists($table, $agegroupfield)) {
+            $dbman->add_field($table, $agegroupfield);
+        }
+
+        // Conditionally launch add field endyear.
+        if (!$dbman->field_exists($table, $endyearfield)) {
+            $dbman->add_field($table, $endyearfield);
+        }
+
+        // Fitcheck savepoint reached.
+        upgrade_plugin_savepoint(true, 2021022301, 'local', 'fitcheck');
+    }
+
 }

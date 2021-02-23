@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/fitcheck/db" VERSION="20210222" COMMENT="XMLDB file for Moodle local/fitcheck"
+<XMLDB PATH="local/fitcheck/db" VERSION="20210223" COMMENT="XMLDB file for Moodle local/fitcheck"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -55,9 +55,12 @@
     <TABLE NAME="local_fitcheck_classes" COMMENT="Classes of students to organize the results for the teacher.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="The status of the test. Set to inactive when class deletion is performed."/>
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Name of the class. Editable by teachers"/>
         <FIELD NAME="gender" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Gender for the class."/>
         <FIELD NAME="testnr" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Current test number for the fitcheck class"/>
+        <FIELD NAME="agegroup" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The age group of the class. Used to compare classes of the same age group."/>
+        <FIELD NAME="endyear" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The ending year of a class. Used during class deletion to wipe records of classes which have graduated."/>
         <FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The ID of the teacher of the class"/>
       </FIELDS>
       <KEYS>
