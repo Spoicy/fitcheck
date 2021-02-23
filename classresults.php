@@ -224,6 +224,9 @@ $students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.of
 
 // Populate table with student data and set test status to incomplete if test data doesn't exist.
 $complete = 1;
+$classgradetotal = 0;
+$classresulttotal = 0;
+$classresulttotalcount = 0;
 foreach ($students as $student) {
     $row = array();
     $row[] = "$student->firstname $student->lastname";
@@ -234,6 +237,7 @@ foreach ($students as $student) {
         if ($currresult) {
             if (isset($currresult->result) && $currresult->result != null) {
                 $row['result'] = $currresult->result;
+                $classresulttotal += $currresult->result;
             } else {
                 $row['result'] = '-';
             }
@@ -248,6 +252,8 @@ foreach ($students as $student) {
         if ($currresult) {
             if ($currresult->result != null) {
                 $row['grade'] = local_fitcheck_calc_grade($currenttest, $currresult->result);
+                $classgradetotal = local_fitcheck_calc_grade($currenttest, $currresult->result);
+                $classresulttotalcount++;
             } else {
                 $row['grade'] = '-';
             }
@@ -269,6 +275,8 @@ foreach ($students as $student) {
             }
             if ($resultcount) {
                 $row['grade'] = round($resulttotal / $resultcount, 2);
+                $classgradetotal += round($resulttotal / $resultcount, 2);
+                $classresulttotalcount++;
             } else {
                 $row['grade'] = '-';
             }
@@ -303,6 +311,22 @@ if (isset($gradesort)) {
         $table->data = array_reverse($table->data);
     }
 }
+$row = array();
+$row[] = html_writer::tag('b', get_string('classaverage', 'local_fitcheck'));
+if (isset($result)) {
+    if ($classresulttotalcount) {
+        $row[] = html_writer::tag('b', round($classresulttotal / $classresulttotalcount, 2));
+    } else {
+        $row[] = '-';
+    }
+}
+if ($classresulttotalcount) {
+    $row[] = html_writer::tag('b', round($classgradetotal / $classresulttotalcount, 2));
+} else {
+    $row[] = '-';
+}
+$row[] = '';
+$table->data[] = $row;
 
 $extras = '';
 if ($sort) {
@@ -326,7 +350,7 @@ if ($class->testnr) {
 $printbutton = html_writer::tag('a', get_string('printresults', 'local_fitcheck'),
     ['name' => 'printpdf', 'id' => 'printpdf',
         'href' => new moodle_url('/local/fitcheck/classpdf.php', ['classid' => $class->id, 'testnr' => $class->testnr]),
-        'class' => 'btn btn-secondary float-right']);
+        'class' => 'btn btn-secondary float-right mr-2']);
 
 $newtestbutton = html_writer::tag('button', get_string('startnewtest', 'local_fitcheck'),
     ['name' => 'newtest', 'id' => 'newtest', 'type' => 'submit', 'class' => 'btn btn-secondary float-right', 'value' => 1]);
