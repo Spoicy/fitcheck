@@ -26,36 +26,16 @@ function xmldb_local_fitcheck_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2021021000) {
+    if ($oldversion < 2021022300) {
 
-        // Define field testnr to be added to local_fitcheck_classes.
-        $table = new xmldb_table('local_fitcheck_classes');
-        $field = new xmldb_field('testnr', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'gender');
-
-        // Conditionally launch add field testnr.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field offset to be added to local_fitcheck_users.
-        $table = new xmldb_table('local_fitcheck_users');
-        $field = new xmldb_field('offset', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'id');
-
-        // Conditionally launch add field offset.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field testnr to be added to local_fitcheck_results.
+        // Define field id to be added to local_fitcheck_results.
         $table = new xmldb_table('local_fitcheck_results');
-        $field = new xmldb_field('testnr', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'result');
+        $field = new xmldb_field('result', XMLDB_TYPE_NUMBER, '10, 3', null, null, null, null, 'id');
 
-        // Conditionally launch add field testnr.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+        // Launch change of type for field result.
+        $dbman->change_field_type($table, $field);
 
         // Fitcheck savepoint reached.
-        upgrade_plugin_savepoint(true, 2021021000, 'local', 'fitcheck');
+        upgrade_plugin_savepoint(true, 2021022300, 'local', 'fitcheck');
     }
 }
