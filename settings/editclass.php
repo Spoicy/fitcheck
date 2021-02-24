@@ -77,7 +77,11 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
     $class->agegroup = $classagegroup;
     $class->endyear = $classendyear;
     if (preg_match('/^[0-9]{4}\/[0-9]{2}$|^[0-9]{4}\/[0-9]{4}$/', $class->agegroup)) {
-        $class->agegroup = str_replace('/', '', $class->agegroup);
+        if (strlen($class->agegroup) == 9) {
+            $class->agegroup = substr($class->agegroup, 0, 4) . substr($class->agegroup, 7, 2); 
+        } else {
+            $class->agegroup = str_replace('/', '', $class->agegroup);
+        }
     } else {
         print_error('agegrouperror', 'local_fitcheck');
     }
