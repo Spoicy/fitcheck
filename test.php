@@ -99,6 +99,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'id' => 'result1',
             'placeholder' => '0',
             'class' => 'mb-4 form-control w-25',
+            'onchange' => $method,
             'onkeyup' => $method,
             'required' => '',
             'step' => 0.01
@@ -110,6 +111,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'id' => 'result2',
             'placeholder' => '0',
             'class' => 'mb-4 form-control w-25',
+            'onchange' => $method,
             'onkeyup' => $method,
             'required' => '',
             'step' => 0.01
