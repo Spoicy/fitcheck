@@ -105,6 +105,10 @@ div[class*="testchart-"] {
     margin-right: auto;
 }
 
+.editedcell {
+    background-color: #FFE4B5;
+}
+
 @media (min-width: 1200px) {
     .gradetable {
         font-size: 17px;

@@ -294,7 +294,7 @@ foreach ($students as $student) {
         }
     }
     $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
-        $OUTPUT->pix_icon('t/edit', get_string('edit'))) .
+        $OUTPUT->pix_icon('i/edit', get_string('edit'))) .
         html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
         $OUTPUT->pix_icon('t/hide', get_string('viewstudentresults', 'local_fitcheck')));
     $table->data[] = $row;
