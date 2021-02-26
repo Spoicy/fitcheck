@@ -45,6 +45,10 @@ $studentinfo = $DB->get_record('user', ['id' => $student->userid]);
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $class->gender, 'status' => 1]);
 
+if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresults', context_system::instance())) {
+    print_error('accessdenied', 'admin');
+}
+
 // Fetch loading animation.
 $loading = $OUTPUT->image_url("i/loading", "core");
 

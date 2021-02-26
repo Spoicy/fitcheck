@@ -53,6 +53,10 @@ if ($dir == 'asc') {
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
 
+if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresults', context_system::instance())) {
+    print_error('accessdenied', 'admin');
+}
+
 // Fetch students.
 $students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u, {local_fitcheck_users} lfu
     WHERE classid = ' . $id .
