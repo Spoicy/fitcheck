@@ -148,6 +148,7 @@ $string['alltests'] = 'All tests';
 $string['agegrouperror'] = 'The age group does not follow pattern as shown by the example text.';
 $string['endyearerror'] = 'The graduation year is not a valid year.';
 $string['classaverage'] = 'Class average:';
+$string['updateresults'] = 'Update results';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';
