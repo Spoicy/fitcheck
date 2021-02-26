@@ -272,8 +272,8 @@ foreach ($students as $student) {
         if (count($allresults)) {
             foreach ($allresults as $allresult) {
                 if ($allresult->result != null) {
-                    $currenttest = $DB->get_record('local_fitcheck_tests', ['id' => $allresult->testid]);
-                    $resulttotal += local_fitcheck_calc_grade($currenttest, $allresult->result);
+                    $currentalltest = $DB->get_record('local_fitcheck_tests', ['id' => $allresult->testid]);
+                    $resulttotal += local_fitcheck_calc_grade($currentalltest, $allresult->result);
                     $resultcount++;
                 }
             }
@@ -315,6 +315,8 @@ if (isset($gradesort)) {
         $table->data = array_reverse($table->data);
     }
 }
+
+// Add class average row.
 $row = array();
 $row[] = html_writer::tag('b', get_string('classaverage', 'local_fitcheck'));
 if (isset($result)) {
@@ -332,6 +334,46 @@ if ($classresulttotalcount) {
 $row[] = '';
 $table->data[] = $row;
 
+// Add age group average row.
+$row = array();
+$agresults = $DB->get_records_sql('SELECT lfr.id, lfr.testid, lfr.userid, lfr.testnr, lfr.result FROM {local_fitcheck_results} lfr
+    INNER JOIN {local_fitcheck_users} lfu
+    ON lfu.userid = lfr.userid
+    INNER JOIN {local_fitcheck_classes} lfc
+    ON lfc.id = lfu.classid
+    WHERE lfc.agegroup = ' . $class->agegroup .
+    ' AND lfr.testnr = ' . $class->testnr . ' + lfu.offset');
+$agresulttotal = 0;
+$aggradetotal = 0;
+$agcount = 0;
+foreach ($agresults as $agresult) {
+    if (isset($result)) {
+        if ($agresult->testid == $view && $agresult->result != null) {
+            $agresulttotal += $agresult->result;
+            $aggradetotal += local_fitcheck_calc_grade($tests[$agresult->testid], $agresult->result);
+            $agcount++;
+        }
+    } else if ($agresult->result != null) {
+        $aggradetotal += local_fitcheck_calc_grade($tests[$agresult->testid], $agresult->result);
+        $agcount++;
+    }
+}
+
+$row[] = html_writer::tag('b', get_string('agegroupaverage', 'local_fitcheck'));
+if (isset($result)) {
+    if ($agcount) {
+        $row[] = html_writer::tag('b', round($agresulttotal / $agcount, 2));
+    } else {
+        $row[] = '-';
+    }
+}
+if ($agcount) {
+    $row[] = html_writer::tag('b', round($aggradetotal / $agcount, 2));
+} else {
+    $row[] = '-';
+}
+$row[] = ' ';
+$table->data[] = $row;
 $extras = '';
 if ($sort) {
     $extras .= '&sort=' . $sort;

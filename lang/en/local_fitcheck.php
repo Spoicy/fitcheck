@@ -148,6 +148,7 @@ $string['alltests'] = 'All tests';
 $string['agegrouperror'] = 'The age group does not follow pattern as shown by the example text.';
 $string['endyearerror'] = 'The graduation year is not a valid year.';
 $string['classaverage'] = 'Class average:';
+$string['agegroupaverage'] = 'Age group average:';
 $string['updateresults'] = 'Update results';
 $string['noclassfound'] = 'No class for specified student found.';
 
