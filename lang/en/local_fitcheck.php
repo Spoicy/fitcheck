@@ -149,6 +149,7 @@ $string['agegrouperror'] = 'The age group does not follow pattern as shown by th
 $string['endyearerror'] = 'The graduation year is not a valid year.';
 $string['classaverage'] = 'Class average:';
 $string['updateresults'] = 'Update results';
+$string['noclassfound'] = 'No class for specified student found.';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

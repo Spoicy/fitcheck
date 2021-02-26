@@ -42,7 +42,11 @@ $PAGE->navbar->add(get_string('listclasses', 'local_fitcheck'), new moodle_url('
 
 $student = $DB->get_record('local_fitcheck_users', ['id' => $id]);
 $studentinfo = $DB->get_record('user', ['id' => $student->userid]);
-$class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
+if ($student->classid) {
+    $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
+} else {
+    print_error('noclassfound', 'local_fitcheck');
+}
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $class->gender, 'status' => 1]);
 
 if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresults', context_system::instance())) {
