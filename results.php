@@ -169,12 +169,24 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
                 $calcgrade = round($test->minresult, 2);
             } else {
                 $calcgrade = round(($test->maxresult - $test->minresult) * ((5 - ($i - 1)) / 5) + $test->minresult, 2);
+                $stepcheck = fmod($calcgrade, $test->step);
+                if ($stepcheck / $test->step >= 0.499) {
+                    $calcgrade += $test->step - $stepcheck;
+                } else {
+                    $calcgrade -= $stepcheck;
+                }
             }
         } else {
             if ($i == 1) {
                 $calcgrade = round($test->minresult, 2);
             } else {
                 $calcgrade = round(($test->maxresult - $test->minresult) * (($i - 1) / 5) + $test->minresult, 2);
+                $stepcheck = fmod($calcgrade, $test->step);
+                if ($stepcheck / $test->step >= 0.499) {
+                    $calcgrade += $test->step - $stepcheck;
+                } else {
+                    $calcgrade -= $stepcheck;
+                }
             }
         }
         if ($firsttestid == $test->id) {
