@@ -75,12 +75,7 @@ $lowest = 1;
 
 // Set which tests to display, max of 3.
 if ($highest > $lowest + 2) {
-    $highest = $lowest + 2;
-} else if ($highest - $lowest < 2) {
-    $lowest - (2 - ($highest - $lowest));
-    if ($lowest < 1) {
-        $lowest = 1;
-    }
+    $lowest = $highest - 2;
 }
 
 $testdata = [];
@@ -92,6 +87,13 @@ if ($lowest != 0) {
 // Slice arrays to get only the tests we want to display.
 foreach ($testids as $key => $test) {
     $testdata[$key] = array_slice($test, $lowestarrval, $highest - $lowest + 1);
+}
+
+foreach ($testdata as $key => $data) {
+    if (!isset($data[$highest - $lowest])) {
+        $data[$highest - $lowest] = 'null';
+    }
+    $testdata[$key] = $data;
 }
 
 $gradedata = [];
