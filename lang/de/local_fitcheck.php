@@ -36,3 +36,4 @@ $string['testresult'] = 'Dein Resultat:';
 $string['testresultaverage'] = 'Durchschnitt:';
 $string['average'] = 'Durchschnitt';
 $string['testresultminus'] = 'Differenz:';
+$string['wrongresult'] = 'Das eingereichte Resultat ist ungültig.';

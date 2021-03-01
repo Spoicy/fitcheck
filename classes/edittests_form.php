@@ -113,6 +113,11 @@ class local_fitcheck_edittests_form extends moodleform {
         $mform->addHelpButton('method', 'method', 'local_fitcheck');
         $mform->addRule('minmax', $strrequired, 'required', null, 'client');
 
+        $mform->addElement('text', 'step', get_string('step', 'local_fitcheck'), 'size="20"');
+        $mform->addHelpButton('step', 'step', 'local_fitcheck');
+        $mform->setType('step', PARAM_LOCALISEDFLOAT);
+        $mform->addRule('step', $strrequired, 'required', null, 'client');
+
         $mform->addElement('text', 'maxresult', get_string('maxresult', 'local_fitcheck'), 'size="20"');
         $mform->addHelpButton('maxresult', 'maxresult', 'local_fitcheck');
         $mform->setType('maxresult', PARAM_LOCALISEDFLOAT);

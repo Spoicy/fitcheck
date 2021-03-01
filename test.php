@@ -105,7 +105,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'onchange' => $method,
             'onkeyup' => $method,
             'required' => '',
-            'step' => 0.01
+            'step' => $test->step
             ]) .
         html_writer::label($test->resulttype2 . ':', 'result2') .
         html_writer::tag('input', '', [
@@ -117,7 +117,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'onchange' => $method,
             'onkeyup' => $method,
             'required' => '',
-            'step' => 0.01
+            'step' => $test->step
             ]) .
         html_writer::label(get_string($transstring, 'local_fitcheck'), 'result') .
         $resulterror .
@@ -128,7 +128,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'placeholder' => '0',
             'class' => 'mb-4 form-control w-25',
             'readonly' => '',
-            'step' => 0.01
+            'step' => $test->step
             ]);
 } else {
     $placeholder = '0';
@@ -144,7 +144,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'placeholder' => $placeholder,
             'class' => 'mb-4 form-control w-25',
             'required' => '',
-            'step' => 0.01
+            'step' => $test->step
             ]);
 }
 $editurl = new moodle_url('/local/fitcheck/settings/edittests.php', ['id' => $id]);
@@ -163,11 +163,17 @@ $form = html_writer::tag('form', $formelements, ['action' => $urlwithsess, 'meth
 echo $OUTPUT->header();
 echo html_writer::div($html, 'fitcheck-test');
 echo html_writer::script('
+    var step = ' . $test->step . ';
     function averageCalc() {
         var x = Number(document.getElementById("result1").value);
         var y = Number(document.getElementById("result2").value);
         if (x != 0 && y != 0) {
-            document.getElementById("result").value = (x + y) / 2;
+            var value = (x + y) / 2;
+            var stepcheck = value % step;
+            if (stepcheck / step >= 0.499) {
+                value = value + (step - stepcheck);
+            }
+            document.getElementById("result").value = value;
         }
     }
 
