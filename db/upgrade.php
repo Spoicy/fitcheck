@@ -66,4 +66,18 @@ function xmldb_local_fitcheck_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021022301, 'local', 'fitcheck');
     }
 
+    if ($oldversion < 2021030100) {
+
+        // Define field thumbnail to be dropped from local_fitcheck_tests.
+        $table = new xmldb_table('local_fitcheck_tests');
+        $field = new xmldb_field('thumbnail');
+
+        // Conditionally launch drop field thumbnail.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Fitcheck savepoint reached.
+        upgrade_plugin_savepoint(true, 2021030100, 'local', 'fitcheck');
+    }
 }
