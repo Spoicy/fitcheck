@@ -60,6 +60,8 @@ $manageroptions = array(
 );
 $returnurl = new moodle_url('/local/fitcheck');
 
+$trailingzerosfields = ['step', 'maxresult', 'minresult'];
+
 // Check if test is new or existing.
 if ($id < 1) {
     $test = new stdClass();
@@ -68,6 +70,13 @@ if ($id < 1) {
 } else {
     $test = $DB->get_record('local_fitcheck_tests', array('id' => $id), '*', MUST_EXIST);
     $PAGE->navbar->add($test->shortname);
+    // Remove trailing zeros from decimal fields.
+    foreach ($trailingzerosfields as $field) {
+        $pos = strpos($test->$field, '.');
+	    if ($pos !== false) { 
+		    $test->$field = rtrim(rtrim($test->$field, '0'), '.');
+	    }
+    }
 }
 
 // Prepare HTML-Editor.

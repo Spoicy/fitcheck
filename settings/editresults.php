@@ -72,6 +72,11 @@ for ($i = 1; $i <= $testnr; $i++) {
     foreach ($tests as $test) {
         $resultquery = $DB->get_record('local_fitcheck_results', ['userid' => $student->userid, 'testnr' => $i, 'testid' => $test->id]);
         if ($resultquery && $resultquery->result) {
+            // Remove trailing zeros from decimal numbers.
+            $pos = strpos($resultquery->result, '.');
+	        if ($pos !== false) { 
+		        $resultquery->result = rtrim(rtrim($resultquery->result, '0'), '.');
+	        }
             $resultcell = new html_table_cell($resultquery->result);
             $resultcell->attributes['contenteditable'] = "true";
             $resultcell->id = $resultquery->id;
