@@ -29,7 +29,7 @@ require_login();
 !isguestuser($USER->id) || print_error('noguest');
 
 $id = required_param('id', PARAM_INT);
-$result = optional_param('result', '', PARAM_FLOAT);
+$result = optional_param('result', -100000, PARAM_FLOAT);
 $test = $DB->get_record('local_fitcheck_tests', ['id' => $id]);
 $mainpage = new moodle_url('/local/fitcheck/');
 
@@ -49,8 +49,9 @@ if ($test->status == 0) {
 
 $returnurl = new moodle_url('/local/fitcheck');
 $urlwithsess = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
+$resulterror = '';
 
-if ($result && $result >= 0) {
+if (($result != -100000 && $result >= 0) || ($test->method == 2 && $result != -100000)) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
     $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
     $resulttoadd = new stdClass();
@@ -61,6 +62,8 @@ if ($result && $result >= 0) {
     require_sesskey();
     $DB->insert_record('local_fitcheck_results', $resulttoadd);
     redirect($returnurl);
+} else if ($result != -100000) {
+    $resulterror = html_writer::tag('p', get_string('wrongresult', 'local_fitcheck'), ['class' => 'mb-1', 'style' => 'color:red;']);
 }
 
 // Prepare test html.
@@ -76,7 +79,7 @@ foreach ($files as $file) {
     if (in_array(substr($file->get_filename(), -4), $filesmask)) {
         $video = html_writer::tag('h4', get_string('videoheader', 'local_fitcheck')) .
             html_writer::tag('video', html_writer::start_tag('source', ['src' => '/pluginfile.php/1/local_fitcheck/attachment/' . $filesitemid . '/' . $file->get_filename()]),
-                ['width' => '80%', 'controls' => '', 'class' => 'mb-4 mt-2']);
+                ['controls' => '', 'class' => 'examplevideo w-75 mb-4 mt-2']);
     }
 }
 
@@ -117,6 +120,7 @@ if ($test->resulttype1 && $test->resulttype2) {
             'step' => 0.01
             ]) .
         html_writer::label(get_string($transstring, 'local_fitcheck'), 'result') .
+        $resulterror .
         html_writer::tag('input', '', [
             'type' => 'number',
             'name' => 'result',
@@ -132,6 +136,7 @@ if ($test->resulttype1 && $test->resulttype2) {
         $placeholder = '+/- 0';
     }
     $formelements = html_writer::label(get_string('testresult', 'local_fitcheck'), 'result') .
+        $resulterror .
         html_writer::tag('input', '', [
             'type' => 'number',
             'name' => 'result',

@@ -105,6 +105,10 @@ div[class*="testchart-"] {
     margin-right: auto;
 }
 
+video.examplevideo {
+    max-width: 750px;
+}
+
 .editedcell {
     background-color: #FFE4B5;
 }
