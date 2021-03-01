@@ -33,6 +33,7 @@
         <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="The grading method for the test."/>
         <FIELD NAME="maxresult" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="3" COMMENT="This field is for the calculation of the grade, which is linear."/>
         <FIELD NAME="minresult" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="3" COMMENT="The minimum result of the test."/>
+        <FIELD NAME="step" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="3" COMMENT="The interval/step value. Used for result precision. Can be a whole number or fraction."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

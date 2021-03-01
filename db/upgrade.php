@@ -80,4 +80,19 @@ function xmldb_local_fitcheck_upgrade($oldversion) {
         // Fitcheck savepoint reached.
         upgrade_plugin_savepoint(true, 2021030100, 'local', 'fitcheck');
     }
+
+    if ($oldversion < 2021030101) {
+
+        // Define field step to be added to local_fitcheck_tests.
+        $table = new xmldb_table('local_fitcheck_tests');
+        $field = new xmldb_field('step', XMLDB_TYPE_NUMBER, '10, 3', null, null, null, null, 'minresult');
+
+        // Conditionally launch add field step.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Fitcheck savepoint reached.
+        upgrade_plugin_savepoint(true, 2021030101, 'local', 'fitcheck');
+    }
 }
