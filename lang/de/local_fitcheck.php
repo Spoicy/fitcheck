@@ -26,5 +26,13 @@
 $string['pluginname'] = 'FitCheck';
 $string['title'] = 'FitCheck';
 $string['addtests'] = "FitCheck Tests hinzufügen";
-
-$strong['checkresult'] = 'Kontroliere die Eingabe und bestätige:';
+$string['alreadysubmittedresult'] = 'Sie haben eine Resultat für diesen Test schon eingereicht.';
+$string['gototestsettings'] = 'Bearbeiten';
+$string['submit'] = 'Abschicken';
+$string['gobacktomainpage'] = 'Zur Hauptseite';
+$string['videoheader'] = 'Beispielvideo:';
+$string['checkresult'] = 'Kontroliere die Eingabe und bestätige:';
+$string['testresult'] = 'Dein Resultat:';
+$string['testresultaverage'] = 'Durchschnitt:';
+$string['average'] = 'Durchschnitt';
+$string['testresultminus'] = 'Differenz:';

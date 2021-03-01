@@ -196,7 +196,8 @@ if ($student) {
 if (!has_capability('local/fitcheck:edittests', context_system::instance()) && !$resulttocheck) {
     echo $form;
 } else if (has_capability('local/fitcheck:edittests', context_system::instance())) {
-    echo '<br>' . $editbutton;
+    echo '<br>' . $editbutton .
+        html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'), ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
 } else if ($resulttocheck) {
     echo html_writer::tag('p', get_string('alreadysubmittedresult', 'local_fitcheck'));
 }
