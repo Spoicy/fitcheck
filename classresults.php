@@ -256,7 +256,7 @@ foreach ($students as $student) {
         if ($currresult) {
             if ($currresult->result != null) {
                 $row['grade'] = local_fitcheck_calc_grade($currenttest, $currresult->result);
-                $classgradetotal = local_fitcheck_calc_grade($currenttest, $currresult->result);
+                $classgradetotal += local_fitcheck_calc_grade($currenttest, $currresult->result);
                 $classresulttotalcount++;
             } else {
                 $row['grade'] = '-';
