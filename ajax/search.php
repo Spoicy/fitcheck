@@ -105,7 +105,7 @@ if ($data->search != "") {
         }
         $alrassignedstringvars->count = $alrassignedcount;
         $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
-            ['label' => get_string('alrassignedcountmatching', 'local_fitcheck', $alrassignedstringvars)]);
+            ['label' => get_string('alrassignedcountmatching', 'local_fitcheck', $alrassignedstringvars), 'disabled' => '']);
         $output = $unassignedoptgroup . $alrassignedoptgroup;
     }
 } else {
@@ -144,7 +144,7 @@ if ($data->search != "") {
             }
         }
         $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
-            ['label' => get_string('alrassignedcount', 'local_fitcheck', $alrassignedcount)]);
+            ['label' => get_string('alrassignedcount', 'local_fitcheck', $alrassignedcount), 'disabled' => '']);
         $output = $unassignedoptgroup . $alrassignedoptgroup;
     }
 }
