@@ -56,7 +56,7 @@ if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresu
 // Fetch loading animation.
 $loading = $OUTPUT->image_url("i/loading", "core");
 
-$PAGE->navbar->add($class->name, new moodle_url('/local/fitcheck/classresults', ['id' => $class->id]));
+$PAGE->navbar->add($class->name, new moodle_url('/local/fitcheck/classresults.php', ['id' => $class->id]));
 $PAGE->navbar->add(fullname($studentinfo, true));
 $table = new html_table();
 $table->head[] = ' ';

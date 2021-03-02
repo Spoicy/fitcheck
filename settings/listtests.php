@@ -40,10 +40,6 @@ $PAGE->navbar->add('FitCheck', new moodle_url('/local/fitcheck'));
 $PAGE->navbar->add(get_string('settings', 'local_fitcheck'), new moodle_url('/local/fitcheck/settings'));
 $PAGE->navbar->add(get_string('browselisttests', 'local_fitcheck'));
 
-if (!has_capability('local/fitcheck:deleteusers', context_system::instance())) {
-    print_error('accessdenied', 'admin');
-}
-
 // Create table headings with sort functionality.
 $tableheaders = array('testname', 'gender', 'status');
 if ($dir == 'asc') {

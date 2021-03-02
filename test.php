@@ -76,7 +76,7 @@ $files = $fs->get_area_files($PAGE->context->id, 'local_fitcheck', 'attachment',
 $video = '';
 
 foreach ($files as $file) {
-    if (in_array(substr($file->get_filename(), -4), $filesmask)) {
+    if (in_array(strtolower(substr($file->get_filename(), -4)), $filesmask)) {
         $video = html_writer::tag('h4', get_string('videoheader', 'local_fitcheck')) .
             html_writer::tag('video', html_writer::start_tag('source', ['src' => '/pluginfile.php/1/local_fitcheck/attachment/' . $filesitemid . '/' . $file->get_filename()]),
                 ['controls' => '', 'class' => 'examplevideo w-75 mb-4 mt-2']);
