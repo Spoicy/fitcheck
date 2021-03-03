@@ -27,8 +27,13 @@ require_once($CFG->dirroot.'/local/fitcheck/lib.php');
 require_login();
 !isguestuser($USER->id) || print_error('noguest');
 
+$userid = optional_param('id', $USER->id, PARAM_INT);
+if ($userid != $USER->id) {
+    require_capability('local/fitcheck:viewallresults', context_system::instance());
+}
+
 // Set page values.
-$PAGE->set_url(new moodle_url('/local/fitcheck/results.php'));
+$PAGE->set_url(new moodle_url('/local/fitcheck/results.php?id=' . $userid));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('title', 'local_fitcheck'));
@@ -36,10 +41,6 @@ $PAGE->set_heading(get_string('title', 'local_fitcheck'));
 $PAGE->navbar->add('FitCheck', new moodle_url('/local/fitcheck/'));
 $PAGE->navbar->add(get_string('results', 'local_fitcheck'));
 
-$userid = optional_param('id', $USER->id, PARAM_INT);
-if ($userid != $USER->id) {
-    require_capability('local/fitcheck:viewallresults', context_system::instance());
-}
 
 $chart = html_writer::div('', 'chart--container', ['id' => 'resultsChart', 'style' => 'height:450px;']);
 $pref = 0;

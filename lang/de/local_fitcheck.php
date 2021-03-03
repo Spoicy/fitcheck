@@ -37,3 +37,7 @@ $string['testresultaverage'] = 'Durchschnitt:';
 $string['average'] = 'Durchschnitt';
 $string['testresultminus'] = 'Differenz:';
 $string['wrongresult'] = 'Das eingereichte Resultat ist ungültig.';
+$string['results'] = 'Resultate';
+$string['alltests'] = 'Alle Disziplinen';
+$string['testnumber'] = 'Test Nr. {$a}';
+$string['grade'] = 'Note';
