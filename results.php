@@ -107,6 +107,8 @@ foreach ($tests as $test) {
     $encodedtestdata = [];
     foreach ($testdata[$test->id] as $data) {
         $newtestdata[] = local_fitcheck_calc_grade($test, $data);
+    }
+    foreach ($testids[$test->id] as $data) {
         if ($data == "null") {
             $encodedtestdata[] = null;
         } else {
@@ -118,19 +120,20 @@ foreach ($tests as $test) {
         html_writer::tag('canvas', '', ['height' => '300', 'width' => '450', 'id' => 'lineChart' . $test->id]),
         'testchart-' . $test->id . ' d-none');
     $counttests .= 'var test' . $test->id . ' = {labels: [';
-    for ($i = 1; $i <= count($testdata[$test->id]); $i++) {
+    for ($i = 1; $i <= count($testids[$test->id]); $i++) {
         $counttests .= '\'' . $i . '. Test\',';
     }
     $counttests .= '],
         datasets: [
             {
-                fillColor: "rgba(220,220,220,0.2)",
-                strokeColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#00979f",
+                backgroundColor: "rgba(220,220,220,0.2)",
+                strokeStyle: "rgba(220,220,220,1)",
+                pointStyle: "rgba(220,220,220,1)",
+                pointBackgroundColor: "#00979f",
                 pointHighlightFill: "#00979f",
                 pointHighlightStroke: "rgba(220,220,220,1)",
-                data: ' . json_encode($encodedtestdata) . '
+                data: ' . json_encode($encodedtestdata) . ',
+                spanGaps: true
             }
         ]};
         ';
