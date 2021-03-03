@@ -72,7 +72,8 @@ foreach ($tests as $test) {
     $thumbnailhtml = '';
     if ($thumbnail) {
         $thumbnailhtml = html_writer::div(
-            html_writer::img('/pluginfile.php/1/local_fitcheck/attachment/' . $fileitemid . '/' . $thumbnail->get_filename(), 'Thumbnail', ['width' => '100%']),
+            html_writer::img('/pluginfile.php/1/local_fitcheck/attachment/' . $fileitemid . '/' . $thumbnail->get_filename(),
+                'Thumbnail', ['width' => '100%']),
             'card-img-top thumbnail-real');
     } else {
         $thumbnailhtml = html_writer::div(html_writer::img($placeholder, 'Thumbnail'),

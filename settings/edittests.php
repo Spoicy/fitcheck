@@ -73,17 +73,19 @@ if ($id < 1) {
     // Remove trailing zeros from decimal fields.
     foreach ($trailingzerosfields as $field) {
         $pos = strpos($test->$field, '.');
-	    if ($pos !== false) { 
-		    $test->$field = rtrim(rtrim($test->$field, '0'), '.');
-	    }
+        if ($pos !== false) {
+            $test->$field = rtrim(rtrim($test->$field, '0'), '.');
+        }
     }
 }
 
 // Prepare HTML-Editor.
 if ($test->id !== -1) {
     $test->descriptionformat = FORMAT_HTML;
-    $test = file_prepare_standard_editor($test, 'description', $editoroptions, context_system::instance(), 'local_fitcheck', 'attachment', $test->id * 10 + 1);
-    $test = file_prepare_standard_filemanager($test, 'video', $manageroptions, context_system::instance(), 'local_fitcheck', 'attachment', $test->id * 10 + 2);
+    $test = file_prepare_standard_editor($test, 'description', $editoroptions, $PAGE->context,
+        'local_fitcheck', 'attachment', $test->id * 10 + 1);
+    $test = file_prepare_standard_filemanager($test, 'video', $manageroptions, $PAGE->context,
+        'local_fitcheck', 'attachment', $test->id * 10 + 2);
 }
 
 $testform = new local_fitcheck_edittests_form(new moodle_url($PAGE->url), array('test' => $test));

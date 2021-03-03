@@ -70,13 +70,14 @@ for ($i = 1; $i <= $testnr; $i++) {
     $row = array();
     $row[] = html_writer::tag('b', get_string('testnumber', 'local_fitcheck', $i));
     foreach ($tests as $test) {
-        $resultquery = $DB->get_record('local_fitcheck_results', ['userid' => $student->userid, 'testnr' => $i, 'testid' => $test->id]);
+        $resultquery = $DB->get_record('local_fitcheck_results',
+            ['userid' => $student->userid, 'testnr' => $i, 'testid' => $test->id]);
         if ($resultquery && $resultquery->result) {
             // Remove trailing zeros from decimal numbers.
             $pos = strpos($resultquery->result, '.');
-	        if ($pos !== false) { 
-		        $resultquery->result = rtrim(rtrim($resultquery->result, '0'), '.');
-	        }
+            if ($pos !== false) {
+                $resultquery->result = rtrim(rtrim($resultquery->result, '0'), '.');
+            }
             $resultcell = new html_table_cell($resultquery->result);
             $resultcell->attributes['contenteditable'] = "true";
             $resultcell->id = $resultquery->id;
@@ -98,7 +99,6 @@ $button = html_writer::tag('input', '', ['type' => 'button', 'value' => get_stri
 'id' => 'updateresults', 'name' => 'updateresults',
 'class' => 'btn btn-secondary float-right']);
 
-//$table->data[] = '';
 echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
 echo $OUTPUT->header();

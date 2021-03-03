@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
     $ADMIN->add('localplugins', new admin_category('local_fitcheck_settings', new lang_string('pluginname', 'local_fitcheck')));
-    $settingspage = new admin_externalpage('addfitchecktests', new lang_string('addtests', 'local_fitcheck'), "$CFG->wwwroot/local/fitcheck/settings/edittests.php");
-
+    $settingspage = new admin_externalpage('addfitchecktests', new lang_string('addtests', 'local_fitcheck'),
+        "$CFG->wwwroot/local/fitcheck/settings/edittests.php");
     $ADMIN->add('localplugins', $settingspage);
 }

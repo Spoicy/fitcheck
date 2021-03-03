@@ -68,7 +68,8 @@ if (($result != -100000 && $result >= 0) || ($test->method == 2 && $result != -1
 
 // Prepare test html.
 $html = html_writer::tag('h2', $test->fullname, ['class' => 'fitcheck-test-title', 'style' => 'font-weight: 400;']);
-$html .= file_rewrite_pluginfile_urls($test->description, 'pluginfile.php', $PAGE->context->id, 'local_fitcheck', 'attachment', $test->id * 10 + 1);
+$html .= file_rewrite_pluginfile_urls($test->description, 'pluginfile.php', $PAGE->context->id,
+    'local_fitcheck', 'attachment', $test->id * 10 + 1);
 $fs = get_file_storage();
 $filesmask = ['.mov', '.mp4'];
 $filesitemid = $test->id * 10 + 2;
@@ -78,7 +79,9 @@ $video = '';
 foreach ($files as $file) {
     if (in_array(strtolower(substr($file->get_filename(), -4)), $filesmask)) {
         $video = html_writer::tag('h4', get_string('videoheader', 'local_fitcheck')) .
-            html_writer::tag('video', html_writer::start_tag('source', ['src' => '/pluginfile.php/1/local_fitcheck/attachment/' . $filesitemid . '/' . $file->get_filename()]),
+            html_writer::tag('video',
+                html_writer::start_tag('source',
+                    ['src' => '/pluginfile.php/1/local_fitcheck/attachment/' . $filesitemid . '/' . $file->get_filename()]),
                 ['controls' => '', 'class' => 'examplevideo w-75 mb-4 mt-2']);
     }
 }
@@ -93,7 +96,6 @@ if ($test->resulttype1 && $test->resulttype2) {
         $method = 'averageCalc()';
         $transstring = 'testresultaverage';
     }
-    
 
     $formelements = html_writer::label($test->resulttype1 . ':', 'result1') .
         html_writer::tag('input', '', [
@@ -150,13 +152,15 @@ if ($test->resulttype1 && $test->resulttype2) {
 $editurl = new moodle_url('/local/fitcheck/settings/edittests.php', ['id' => $id]);
 $editbutton = '';
 if (has_capability('local/fitcheck:edittests', $PAGE->context)) {
-    $editbutton = html_writer::tag('a', get_string('gototestsettings', 'local_fitcheck'), ['href' => $editurl, 'class' => 'btn btn-secondary mr-1']);
+    $editbutton = html_writer::tag('a', get_string('gototestsettings', 'local_fitcheck'),
+        ['href' => $editurl, 'class' => 'btn btn-secondary mr-1']);
 }
 $formelements .= html_writer::label(get_string('checkresult', 'local_fitcheck'), 'checkresult') . '<br>' .
     html_writer::checkbox('checkresult', 1, false, '', ['class' => 'mb-4', 'required' => '']) . '<br>' .
     html_writer::tag('button', get_string('submit', 'local_fitcheck'), ['type' => 'submit', 'class' => 'btn btn-primary mr-1']) .
     $editbutton .
-    html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'), ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
+    html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'),
+        ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
 $form = html_writer::tag('form', $formelements, ['action' => $urlwithsess, 'method' => 'post', 'class' => 'fitcheck-resultform']);
 
 // Output page.
@@ -203,7 +207,8 @@ if (!has_capability('local/fitcheck:edittests', context_system::instance()) && !
     echo $form;
 } else if (has_capability('local/fitcheck:edittests', context_system::instance())) {
     echo '<br>' . $editbutton .
-        html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'), ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
+        html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'),
+            ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
 } else if ($resulttocheck) {
     echo html_writer::tag('p', get_string('alreadysubmittedresult', 'local_fitcheck'));
 }

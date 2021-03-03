@@ -134,7 +134,8 @@ foreach ($tests as $test) {
             }
         ]};
         ';
-    $canvasjs .= "new Chart(document.getElementById(\"lineChart" . $test->id . "\").getContext(\"2d\"), {type: 'line', data: test$test->id, options: $canvasoptions});";
+    $canvasjs .= "new Chart(document.getElementById(\"lineChart" . $test->id .
+        "\").getContext(\"2d\"), {type: 'line', data: test$test->id, options: $canvasoptions});";
 }
 
 // Prepare series string for ZingChart.
@@ -150,14 +151,17 @@ for ($i = 0; $i < $highest - $lowest + 1; $i++) {
 }
 
 // Create grade table header.
-$testnamesheader = html_writer::tag('th', html_writer::div(get_string('grade', 'local_fitcheck'), 'gradetablecell'), ['class' => 'p-1 text-center']);
+$testnamesheader = html_writer::tag('th',
+    html_writer::div(get_string('grade', 'local_fitcheck'), 'gradetablecell'), ['class' => 'p-1 text-center']);
 $testgrades = '';
 $firsttestid = array_key_first($testidslabels);
 foreach ($tests as $test) {
     if ($firsttestid == $test->id) {
-        $testnamesheader .= html_writer::tag('td', html_writer::div($test->shortname, 'gradetablecell'), ['class' => 'p-1 text-center selectcurrent gradescale-' . $test->id]);
+        $testnamesheader .= html_writer::tag('td', html_writer::div($test->shortname, 'gradetablecell'),
+            ['class' => 'p-1 text-center selectcurrent gradescale-' . $test->id]);
     } else {
-        $testnamesheader .= html_writer::tag('td', html_writer::div($test->shortname, 'gradetablecell'), ['class' => 'p-1 text-center d-none gradescale-' . $test->id]);
+        $testnamesheader .= html_writer::tag('td', html_writer::div($test->shortname, 'gradetablecell'),
+            ['class' => 'p-1 text-center d-none gradescale-' . $test->id]);
     }
 }
 
@@ -192,9 +196,11 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
             }
         }
         if ($firsttestid == $test->id) {
-            $testgrades .= html_writer::tag('td', html_writer::div($calcgrade, 'gradetablecell'), ['class' => 'p-1 text-center selectcurrent gradescale-' . $test->id]);
+            $testgrades .= html_writer::tag('td', html_writer::div($calcgrade, 'gradetablecell'),
+                ['class' => 'p-1 text-center selectcurrent gradescale-' . $test->id]);
         } else {
-            $testgrades .= html_writer::tag('td', html_writer::div($calcgrade, 'gradetablecell'), ['class' => 'p-1 text-center d-none gradescale-' . $test->id]);
+            $testgrades .= html_writer::tag('td', html_writer::div($calcgrade, 'gradetablecell'),
+                ['class' => 'p-1 text-center d-none gradescale-' . $test->id]);
         }
     }
     $testgrades .= html_writer::end_tag('tr');
@@ -204,7 +210,8 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
 $tablecontent = html_writer::tag('tr', $testnamesheader, ) . $testgrades;
 $gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable']);
 $gradeselect = html_writer::select(
-    $testidslabels, 'gradeselect', $firsttestid, '', ['id' => 'gradeselect', 'onchange' => 'updateGradeTable(this)', 'class' => 'my-3']
+    $testidslabels, 'gradeselect', $firsttestid, '',
+    ['id' => 'gradeselect', 'onchange' => 'updateGradeTable(this)', 'class' => 'my-3']
 );
 
 // Output HTML and scripts.

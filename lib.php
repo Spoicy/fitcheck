@@ -54,8 +54,10 @@ function local_fitcheck_create_test($test) {
 
     $testid = $DB->insert_record('local_fitcheck_tests', $test);
     $test->id = $testid;
-    $test = file_postupdate_standard_editor($test, 'description', $editoroptions, $context, 'local_fitcheck', 'attachment', $test->id * 10 + 1);
-    $test = file_postupdate_standard_filemanager($test, 'video', $manageroptions, context_system::instance(), 'local_fitcheck', 'attachment', $test->id * 10 + 2);
+    $test = file_postupdate_standard_editor($test, 'description', $editoroptions, $context,
+        'local_fitcheck', 'attachment', $test->id * 10 + 1);
+    $test = file_postupdate_standard_filemanager($test, 'video', $manageroptions, $context,
+        'local_fitcheck', 'attachment', $test->id * 10 + 2);
     $DB->update_record('local_fitcheck_tests', $test);
 }
 
@@ -89,9 +91,10 @@ function local_fitcheck_update_test($test) {
     $test->shortname = trim($test->shortname);
     $test->resulttype1 = trim($test->resulttype1);
     $test->resulttype2 = trim($test->resulttype2);
-    $test = file_postupdate_standard_editor($test, 'description', $editoroptions, $context, 'local_fitcheck', 'attachment', $test->id * 10 + 1);
-    $test = file_postupdate_standard_filemanager($test, 'video', $manageroptions, context_system::instance(), 'local_fitcheck', 'attachment', $test->id * 10 + 2);
-
+    $test = file_postupdate_standard_editor($test, 'description', $editoroptions, $context,
+        'local_fitcheck', 'attachment', $test->id * 10 + 1);
+    $test = file_postupdate_standard_filemanager($test, 'video', $manageroptions, $context,
+        'local_fitcheck', 'attachment', $test->id * 10 + 2);
     $DB->update_record('local_fitcheck_tests', $test);
 }
 
@@ -150,16 +153,18 @@ function local_fitcheck_load_classform($class) {
     $loading = $OUTPUT->image_url("i/loading", "core");
 
     // Prepare sql query segments.
-    $availablestudentssqlbase = 'FROM {user} u WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)' .
+    $availablestudentssqlbase = 'FROM {user} u WHERE u.id NOT IN
+        (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)' .
         ' AND u.id != ' . $class->teacherid;
-    $classstudentssqlbase = "FROM {user} u INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id INNER JOIN {local_fitcheck_classes} lfc " .
-        " ON lfu.classid = lfc.id WHERE lfu.classid = $class->id";
+    $classstudentssqlbase = "FROM {user} u INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id
+        INNER JOIN {local_fitcheck_classes} lfc ON lfu.classid = lfc.id WHERE lfu.classid = $class->id";
 
     // Prepare sql queries.
     $availablestudentssql = 'SELECT u.id, u.username, u.firstname, u.lastname ' . $availablestudentssqlbase;
     $classstudentssql = 'SELECT u.id, u.username, u.firstname, u.lastname ' . $classstudentssqlbase;
-    $remainingstudentssql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u WHERE u.id NOT IN (SELECT u.id $availablestudentssqlbase)" .
-        " AND u.id NOT IN (SELECT u.id $classstudentssqlbase) AND u.id != $class->teacherid";
+    $remainingstudentssql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u
+        WHERE u.id NOT IN (SELECT u.id $availablestudentssqlbase)
+        AND u.id NOT IN (SELECT u.id $classstudentssqlbase) AND u.id != $class->teacherid";
 
     // Fetch students from database.
     $availablestudents = $DB->get_records_sql($availablestudentssql . ' ORDER BY u.firstname');
@@ -239,7 +244,8 @@ function local_fitcheck_load_classform($class) {
     );
     $notassignedtd = html_writer::tag('td',
         html_writer::tag('p',
-            html_writer::label(get_string('notassigned', 'local_fitcheck'), 'unassignedselect', true, ['class' => 'font-weight-bold'])
+            html_writer::label(get_string('notassigned', 'local_fitcheck'), 'unassignedselect', true,
+                ['class' => 'font-weight-bold'])
         ) .
         html_writer::div(
             html_writer::tag('select', $availableoptgroup . $remainingoptgroup, [
@@ -249,7 +255,8 @@ function local_fitcheck_load_classform($class) {
         html_writer::div(
             html_writer::label(get_string('search', 'local_fitcheck'), 'unassignedselect_searchtext', true, ['class' => 'mr-1']) .
             html_writer::tag('input', '', ['type' => 'text', 'size' => '15', 'class' => 'form-control',
-                'id' => 'unassignedselect_searchtext', 'name' => 'unassignedselect_searchtext', 'oninput' => 'searchUnassigned()']) .
+                'id' => 'unassignedselect_searchtext', 'name' => 'unassignedselect_searchtext',
+                'oninput' => 'searchUnassigned()']) .
             html_writer::tag('input', '', ['type' => 'button', 'value' => get_string('clear', 'local_fitcheck'),
                 'id' => 'unassignedselect_cleartext', 'name' => 'unassignedselect_cleartext',
                 'class' => 'btn btn-secondary mx-1', 'onclick' => 'clearUnassigned()']),
@@ -344,7 +351,7 @@ function local_fitcheck_load_classform($class) {
 
 /**
  * Calculate a FitCheck grade
- * 
+ *
  * @param stdClass $test test db object
  * @param float $data result data
  * @return float
@@ -354,17 +361,18 @@ function local_fitcheck_calc_grade($test, $data) {
     if ($data == 'null') {
         return 'null';
     }
+    $maxminrange = $test->maxresult - $test->minresult;
     if ($test->method != 2) {
         if ($test->minmax) {
-            $calcresult = ((($test->maxresult - $test->minresult) - ($data - $test->minresult)) / ($test->maxresult - $test->minresult)) * 5 + 1;
+            $calcresult = (($maxminrange - ($data - $test->minresult)) / $maxminrange) * 5 + 1;
         } else {
-            $calcresult = (($data - $test->minresult) / ($test->maxresult - $test->minresult)) * 5 + 1;
+            $calcresult = (($data - $test->minresult) / $maxminrange) * 5 + 1;
         }
     } else {
         if ($test->minmax) {
-            $calcresult = ((($test->maxresult - $test->minresult) - ((0 - $test->maxresult) + $data)) / ($test->maxresult - $test->minresult)) * 5 + 1;
+            $calcresult = (($maxminrange - ((0 - $test->maxresult) + $data)) / $maxminrange) * 5 + 1;
         } else {
-            $calcresult = (((0 - $test->minresult) + $data) / ($test->maxresult - $test->minresult)) * 5 + 1;
+            $calcresult = (((0 - $test->minresult) + $data) / $maxminrange) * 5 + 1;
         }
     }
     if ($calcresult > 6) {

@@ -58,8 +58,8 @@ if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresu
 }
 
 // Fetch students.
-$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u, {local_fitcheck_users} lfu
-    WHERE classid = ' . $id .
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
+    {local_fitcheck_users} lfu WHERE classid = ' . $id .
     ' AND u.id = lfu.userid');
 $completecheck = 1;
 
@@ -81,12 +81,11 @@ if ($newtest || $newtestconfirm) {
         if ($newtestconfirm != md5($newtest)) {
             echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('confirmstartnewtest', 'local_fitcheck'));
-    
-            $optionsyes = array('newtest'=>$newtest, 'newtestconfirm'=>md5($newtest), 'sesskey'=>sesskey());
+            $optionsyes = array('newtest' => $newtest, 'newtestconfirm' => md5($newtest), 'sesskey' => sesskey());
             $returnurl = new moodle_url('/local/fitcheck/classresults.php?id=' . $id);
             $deleteurl = new moodle_url($returnurl, $optionsyes);
             $deletebutton = new single_button($deleteurl, get_string('starttest', 'local_fitcheck'), 'post');
-    
+
             echo $OUTPUT->confirm(get_string('confirmstartnewtestfull', 'local_fitcheck'), $deletebutton, $returnurl);
             echo $OUTPUT->footer();
             die;
@@ -111,8 +110,6 @@ if ($newtest || $newtestconfirm) {
             $DB->update_record('local_fitcheck_classes', $class);
         }
     }
-    
-    
 }
 
 // Create select options.
@@ -222,8 +219,8 @@ if ($view != 0) {
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
 
-$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u, {local_fitcheck_users} lfu
-    WHERE classid = ' . $id .
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
+    {local_fitcheck_users} lfu WHERE classid = ' . $id .
     ' AND u.id = lfu.userid ' . $sqlsort);
 
 // Populate table with student data and set test status to incomplete if test data doesn't exist.

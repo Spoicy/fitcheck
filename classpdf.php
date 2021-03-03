@@ -29,8 +29,6 @@ require_once($CFG->dirroot.'/local/fitcheck/lib.php');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/local/fitcheck/ajax/classpdf.php');
 
-//echo $OUTPUT->header();
-
 // Check access.
 require_login();
 
@@ -43,15 +41,15 @@ $class = $DB->get_record('local_fitcheck_classes', ['id' => $classid]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
 
 // Fetch students.
-$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u, {local_fitcheck_users} lfu
-    WHERE classid = ' . $classid .
+$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
+    {local_fitcheck_users} lfu WHERE classid = ' . $classid .
     ' AND u.id = lfu.userid');
 
 $pdf = new TCPDF("L", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
 
-// set document information.
+// Set document information.
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Kanti');
 $pdf->AddPage();
@@ -60,7 +58,7 @@ $table = new html_table();
 $table->head = array();
 $table->colclasses = array();
 $table->attributes['class'] = 'printresulttable';
-//$table->attributes['cellspacing'] = "0";
+// Cellpadding is deprecated but needed.
 $table->cellpadding = 5;
 
 $table->head['borderbottom-thick-0'] = ' ';

@@ -78,7 +78,7 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
     $class->endyear = $classendyear;
     if (preg_match('/^[0-9]{4}\/[0-9]{2}$|^[0-9]{4}\/[0-9]{4}$/', $class->agegroup)) {
         if (strlen($class->agegroup) == 9) {
-            $class->agegroup = substr($class->agegroup, 0, 4) . substr($class->agegroup, 7, 2); 
+            $class->agegroup = substr($class->agegroup, 0, 4) . substr($class->agegroup, 7, 2);
         } else {
             $class->agegroup = str_replace('/', '', $class->agegroup);
         }
@@ -104,7 +104,8 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
 if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_sesskey()) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $unassignedstudentid]);
     if ($student) {
-        $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results} WHERE userid = ' . $student->userid));
+        $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results}
+            WHERE userid = ' . $student->userid));
         $student->classid = $id;
         $student->offset = $numbertests - $class->testnr;
         $DB->update_record('local_fitcheck_users', $student);
