@@ -104,7 +104,7 @@ function local_fitcheck_update_test($test) {
  *
  * @category  files
  * @param stdClass $course course object
- * @param stdClass $birecord_or_cm block instance record
+ * @param stdClass $cm block instance record
  * @param stdClass $context context object
  * @param string $filearea file area
  * @param array $args extra arguments
@@ -112,7 +112,6 @@ function local_fitcheck_update_test($test) {
  * @param array $options additional options affecting the file serving
  * @return bool
  */
-
 function local_fitcheck_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB, $CFG, $USER;
 
@@ -143,7 +142,6 @@ function local_fitcheck_pluginfile($course, $cm, $context, $filearea, $args, $fo
  *
  * @param stdClass $class fitcheck class object
  */
-
 function local_fitcheck_load_classform($class) {
     global $DB, $OUTPUT;
 
@@ -356,7 +354,6 @@ function local_fitcheck_load_classform($class) {
  * @param float $data result data
  * @return float
  */
-
 function local_fitcheck_calc_grade($test, $data) {
     if ($data == 'null') {
         return 'null';
@@ -386,8 +383,10 @@ function local_fitcheck_calc_grade($test, $data) {
 /**
  * Sort function for grades in class results
  *
+ * @param array $a
+ * @param array $b
+ * @return int
  */
-
 function local_fitcheck_sort_grades($a, $b) {
     if ($a['grade'] == $b['grade']) {
         return 0;
@@ -398,8 +397,10 @@ function local_fitcheck_sort_grades($a, $b) {
 /**
  * Sort function for results in class results
  *
+ * @param array $a
+ * @param array $b
+ * @return int
  */
-
 function local_fitcheck_sort_results($a, $b) {
     if ($a['result'] == $b['result']) {
         return 0;

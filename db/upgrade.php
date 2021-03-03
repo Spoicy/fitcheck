@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Update FitCheck DB tables
+ * 
+ * @param int $oldversion
+ */
 function xmldb_local_fitcheck_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();

@@ -36,6 +36,9 @@ require_once($CFG->dirroot.'/user/lib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_fitcheck_edittests_form extends moodleform {
+    /**
+     * Definition of the edittests moodleform.
+     */
     public function definition() {
         global $USER, $CFG;
 
