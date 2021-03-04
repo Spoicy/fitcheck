@@ -48,6 +48,7 @@ $pref = 0;
 // Fetch tests and user results from database.
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $pref, 'status' => 1]);
 $results = $DB->get_records('local_fitcheck_results', ['userid' => $userid]);
+$student = $DB->get_record('local_fitcheck_users', ['userid' => $userid]);
 
 $testnames = '';
 $testids = [];
@@ -222,6 +223,12 @@ $gradeselect = html_writer::select(
 echo $OUTPUT->header();
 echo html_writer::script('', 'https://cdn.zingchart.com/zingchart.min.js');
 echo html_writer::script('', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js');
+if (!has_capability('local/fitcheck:viewallresults', $PAGE->context)) {
+    echo html_writer::div(
+        html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'),
+            ['href' => new moodle_url('/local/fitcheck'), 'class' => 'btn btn-primary btn-lg']),
+        'd-flex justify-content-center');
+}
 echo $gradeselect;
 echo $chart;
 echo html_writer::script("
@@ -287,6 +294,10 @@ zingchart.render({
 ");
 echo html_writer::div(html_writer::div($testcanvas, 'col-lg-8') .
     html_writer::div($gradetable, 'col-lg-4 gradetable-container d-none my-auto'), 'row');
+if (has_capability('local/fitcheck:viewallresults', $PAGE->context)) {
+    echo html_writer::tag('a', get_string('gobacktoclasspage', 'local_fitcheck'),
+        ['href' => new moodle_url('/local/fitcheck/classresults.php', ['id' => $student->classid]), 'class' => 'btn btn-secondary']);
+}
 echo html_writer::script('' . $counttests . $canvasjs . '' .
     'function updateGradeTable(select) {
         var value = select.value;

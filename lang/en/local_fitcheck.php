@@ -157,6 +157,8 @@ $string['wrongresult'] = 'The result you submitted is invalid.';
 $string['gobacktosettings'] = 'Back to settings';
 $string['gobacktotestlist'] = 'Back to test list';
 $string['gotoresultspage'] = 'See results';
+$string['gobacktoclasslistmain'] = 'Back to class list';
+$string['gobacktoclasspage'] = 'Back to class page';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

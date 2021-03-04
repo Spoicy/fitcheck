@@ -43,4 +43,6 @@ $string['testnumber'] = 'Test Nr. {$a}';
 $string['grade'] = 'Note';
 $string['gobacktosettings'] = 'Zur Einstellungsseite'; 
 $string['gobacktotestlist'] = 'Zur Testliste';
+$string['gobacktoclasslistmain'] = 'Zur Klassenliste';
 $string['gotoresultspage'] = 'Zur Resultatseite';
+$string['gobacktoclasspage'] = 'Zur Klassenseite';

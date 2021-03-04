@@ -411,4 +411,6 @@ echo $testdiv;
 echo html_writer::tag('form', $select . $hidinputs . $newtestbutton . $printbutton,
     ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
 echo html_writer::table($table);
+echo html_writer::tag('a', get_string('gobacktoclasslistmain', 'local_fitcheck'),
+    ['href' => new moodle_url ('/local/fitcheck/settings/listclasses.php'), 'class' => 'btn btn-secondary float-right']);
 echo $OUTPUT->footer();
