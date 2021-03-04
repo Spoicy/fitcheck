@@ -55,6 +55,8 @@ if ($id != -1) {
     $class = new stdClass();
     $class->id = -1;
     $class->name = '';
+    $class->agegroup = '';
+    $class->endyear = '';
 }
 
 // Get params.
