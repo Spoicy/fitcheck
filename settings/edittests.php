@@ -58,7 +58,7 @@ $manageroptions = array(
     'maxfiles' => 2,
     'accepted_types' => array('.mp4', '.mov', '.jpg', '.png')
 );
-$returnurl = new moodle_url('/local/fitcheck');
+$returnurl = new moodle_url('/local/fitcheck/settings/listtests.php');
 
 $trailingzerosfields = ['step', 'maxresult', 'minresult'];
 

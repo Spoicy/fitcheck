@@ -208,8 +208,12 @@ if (!has_capability('local/fitcheck:edittests', context_system::instance()) && !
 } else if (has_capability('local/fitcheck:edittests', context_system::instance())) {
     echo '<br>' . $editbutton .
         html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'),
-            ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
+            ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']) .
+        html_writer::tag('a', get_string('gobacktotestlist', 'local_fitcheck'),
+            ['href' => new moodle_url('/local/fitcheck/settings/listtests.php'), 'class' => 'btn btn-secondary mr-1']);
 } else if ($resulttocheck) {
-    echo html_writer::tag('p', get_string('alreadysubmittedresult', 'local_fitcheck'));
+    echo html_writer::tag('p', get_string('alreadysubmittedresult', 'local_fitcheck')) .
+        html_writer::tag('a', get_string('gobacktomainpage', 'local_fitcheck'),
+            ['href' => $mainpage, 'class' => 'btn btn-secondary mr-1']);
 }
 echo $OUTPUT->footer();

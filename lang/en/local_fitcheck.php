@@ -154,6 +154,9 @@ $string['agegroupaverage'] = 'Age group average:';
 $string['updateresults'] = 'Update results';
 $string['noclassfound'] = 'No class for specified student found.';
 $string['wrongresult'] = 'The result you submitted is invalid.';
+$string['gobacktosettings'] = 'Back to settings';
+$string['gobacktotestlist'] = 'Back to test list';
+$string['gotoresultspage'] = 'See results';
 
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';

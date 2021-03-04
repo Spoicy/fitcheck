@@ -137,5 +137,11 @@ $html .= html_writer::script('
 echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
 echo $OUTPUT->header();
+if (!has_capability('local/fitcheck:edittests', $PAGE->context)) {
+    echo html_writer::div(
+        html_writer::tag('a', get_string('gotoresultspage', 'local_fitcheck'),
+            ['href' => new moodle_url('/local/fitcheck/results.php'), 'class' => 'btn btn-primary mb-3 btn-lg']),
+        'd-flex justify-content-center');
+}
 echo $html;
 echo $OUTPUT->footer();

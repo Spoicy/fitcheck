@@ -41,3 +41,6 @@ $string['results'] = 'Resultate';
 $string['alltests'] = 'Alle Disziplinen';
 $string['testnumber'] = 'Test Nr. {$a}';
 $string['grade'] = 'Note';
+$string['gobacktosettings'] = 'Zur Einstellungsseite'; 
+$string['gobacktotestlist'] = 'Zur Testliste';
+$string['gotoresultspage'] = 'Zur Resultatseite';
