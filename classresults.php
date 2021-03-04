@@ -237,6 +237,10 @@ foreach ($students as $student) {
             ['userid' => $student->userid, 'testid' => $currenttest->id, 'testnr' => $class->testnr + $student->offset]);
         if ($currresult) {
             if (isset($currresult->result) && $currresult->result != null) {
+                $pos = strpos($currresult->result, '.');
+                if ($pos !== false) {
+                    $currresult->result = rtrim(rtrim($currresult->result, '0'), '.');
+                }
                 $row['result'] = $currresult->result;
                 $classresulttotal += $currresult->result;
             } else {
@@ -296,7 +300,7 @@ foreach ($students as $student) {
     }
     $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
         $OUTPUT->pix_icon('i/edit', get_string('edit'))) .
-        html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->id),
+        html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->userid),
         $OUTPUT->pix_icon('t/hide', get_string('viewstudentresults', 'local_fitcheck')));
     $table->data[] = $row;
 }
