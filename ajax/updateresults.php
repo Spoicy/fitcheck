@@ -40,7 +40,7 @@ $data = json_decode(required_param('data', PARAM_RAW));
 foreach ($data as $result) {
     $resultupdate = new stdClass();
     $resultupdate->id = $result->id;
-    if ($result->value == '-' || !$result->value) {
+    if ($result->value == '-' || !is_numeric($result->value)) {
         $resultupdate->result = null;
     } else {
         $resultupdate->result = $result->value;
