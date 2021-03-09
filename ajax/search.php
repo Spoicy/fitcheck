@@ -33,6 +33,7 @@ echo $OUTPUT->header();
 
 // Check access.
 require_login();
+require_capability('local/fitcheck:editresults', context_system::instance());
 
 // Get the search parameter.
 $data = json_decode(required_param('data', PARAM_RAW));

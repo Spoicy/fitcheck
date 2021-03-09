@@ -49,6 +49,11 @@ $pref = 0;
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $pref, 'status' => 1]);
 $results = $DB->get_records('local_fitcheck_results', ['userid' => $userid]);
 $student = $DB->get_record('local_fitcheck_users', ['userid' => $userid]);
+if (!$student && has_capability('local/fitcheck:viewallresults', context_system::instance())) {
+    print_error('studentnotfounderror', 'local_fitcheck');
+} else if (!$student) {
+    print_error('notassignederror', 'local_fitcheck');
+}
 
 $testnames = '';
 $testids = [];

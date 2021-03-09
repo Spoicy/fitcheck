@@ -76,8 +76,6 @@ $string['videoheader'] = 'Video example:';
 $string['settings'] = 'Settings';
 $string['editclass'] = 'Edit class';
 $string['newtest'] = 'New test';
-$string['iderror'] = 'Provided ID was not a number.';
-$string['teacheriderror'] = 'You do not have access to managing this class.';
 $string['results'] = 'Results';
 $string['assigned'] = 'Assigned students';
 $string['notassigned'] = 'Not assigned students';
@@ -101,7 +99,6 @@ $string['createclasstounlock'] = 'Enter a class name and gender to create a clas
 $string['gobacktoclasslist'] = 'Go back';
 $string['search'] = 'Search';
 $string['clear'] = 'Clear';
-$string['notassignederror'] = 'You have not been assigned a class yet.';
 $string['grade'] = 'Grade';
 $string['gradetable'] = 'Grade table';
 $string['testnumber'] = 'Test #{$a}';
@@ -147,8 +144,6 @@ $string['starttest'] = 'Start test';
 $string['printresults'] = 'Print results';
 $string['class'] = 'Class';
 $string['alltests'] = 'All tests';
-$string['agegrouperror'] = 'The age group does not follow pattern as shown by the example text.';
-$string['endyearerror'] = 'The graduation year is not a valid year.';
 $string['classaverage'] = 'Class average:';
 $string['agegroupaverage'] = 'Age group average:';
 $string['updateresults'] = 'Update results';
@@ -160,6 +155,15 @@ $string['gotoresultspage'] = 'See results';
 $string['gobacktoclasslistmain'] = 'Back to class list';
 $string['gobacktoclasspage'] = 'Back to class page';
 
+// Errors strings.
+$string['notassignederror'] = 'You have not been assigned a class yet.';
+$string['studentnotfounderror'] = 'The requested student has no results.';
+$string['iderror'] = 'Provided ID was not a number.';
+$string['teacheriderror'] = 'You do not have access to managing this class.';
+$string['agegrouperror'] = 'The age group does not follow pattern as shown by the example text.';
+$string['endyearerror'] = 'The graduation year is not a valid year.';
+
+// Capability strings.
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';
 $string['fitcheck:deleteusers'] = 'Delete FitCheck Users';
 $string['fitcheck:editclasses'] = 'Edit FitCheck Classes';

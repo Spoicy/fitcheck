@@ -33,6 +33,7 @@ echo $OUTPUT->header();
 
 // Check access.
 require_login();
+require_capability('local/fitcheck:editresults', context_system::instance());
 
 // Get the results parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
@@ -47,4 +48,5 @@ foreach ($data as $result) {
     }
     $DB->update_record('local_fitcheck_results', $resultupdate);
 }
+
 echo json_encode(true);
