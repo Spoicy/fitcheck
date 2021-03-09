@@ -140,7 +140,8 @@ foreach ($tests as $test) {
                 pointHighlightFill: "#00979f",
                 pointHighlightStroke: "rgba(220,220,220,1)",
                 data: ' . json_encode($encodedtestdata) . ',
-                spanGaps: true
+                spanGaps: true,
+                cubicInterpolationMode: "monotone"
             }
         ]};
         ';
