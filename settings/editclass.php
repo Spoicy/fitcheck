@@ -115,7 +115,7 @@ if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_
         $student = new stdClass();
         $student->classid = $id;
         $student->userid = $unassignedstudentid;
-        $student->offset = 0;
+        $student->offset = -($class->testnr);
         $DB->insert_record('local_fitcheck_users', $student);
     }
 }

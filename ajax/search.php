@@ -67,7 +67,8 @@ if ($data->search != "") {
         $assignedstringvars = new stdClass();
         $assignedstringvars->search = $data->search;
         foreach ($assigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                    !isguestuser($student->id)) {
                 $assignedselect .= html_writer::tag('option', $student->firstname . " " .
                     $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
                 $assignedcount++;
@@ -86,7 +87,8 @@ if ($data->search != "") {
         $unassignedstringvars = new stdClass();
         $unassignedstringvars->search = $data->search;
         foreach ($unassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                    !isguestuser($student->id)) {
                 $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
                     $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
                 $unassignedcount++;
@@ -99,7 +101,8 @@ if ($data->search != "") {
         $alrassignedstringvars = new stdClass();
         $alrassignedstringvars->search = $data->search;
         foreach ($alrassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                    !isguestuser($student->id)) {
                 $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
                     $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
                 $alrassignedcount++;
@@ -116,7 +119,8 @@ if ($data->search != "") {
         $assigned = $DB->get_records_sql($assignedsql . ' ORDER BY u.firstname');
         $assignedselect = '';
         foreach ($assigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                    !isguestuser($student->id)) {
                 $assignedselect .= html_writer::tag('option', $student->firstname . " " .
                     $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
                 $assignedcount++;
@@ -130,7 +134,8 @@ if ($data->search != "") {
         $alrassigned = $DB->get_records_sql($alrassignedsql . ' ORDER BY u.firstname');
         $unassignedselect = '';
         foreach ($unassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                    !isguestuser($student->id)) {
                 $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
                     $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
                 $unassignedcount++;
@@ -139,7 +144,8 @@ if ($data->search != "") {
         $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
             ['label' => get_string('unassignedcount', 'local_fitcheck', $unassignedcount)]);
         foreach ($alrassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                    !isguestuser($student->id)) {
                 $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
                     $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
                 $alrassignedcount++;
