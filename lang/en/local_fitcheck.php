@@ -162,6 +162,7 @@ $string['iderror'] = 'Provided ID was not a number.';
 $string['teacheriderror'] = 'You do not have access to managing this class.';
 $string['agegrouperror'] = 'The age group does not follow pattern as shown by the example text.';
 $string['endyearerror'] = 'The graduation year is not a valid year.';
+$string['invalidinputerror'] = 'The received input is invalid.';
 
 // Capability strings.
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';

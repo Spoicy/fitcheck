@@ -37,6 +37,9 @@ require_capability('local/fitcheck:editresults', context_system::instance());
 
 // Get the search parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
+if (!is_numeric($data->classid) || !is_numeric($data->teacherid)) {
+    print_error('invalidinputerror', 'local_fitcheck');
+}
 $selectbase = 'SELECT u.id, u.username, u.firstname, u.lastname';
 $assignedsqlbase = 'FROM {user} u
     INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id
@@ -62,7 +65,7 @@ if ($data->search != "") {
     // Differentiate between both selects.
     if ($data->mode == 0) {
         $assigned = $DB->get_records_sql($assignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
-             LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
+             LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
         $assignedselect = '';
         $assignedstringvars = new stdClass();
         $assignedstringvars->search = $data->search;
@@ -80,9 +83,9 @@ if ($data->search != "") {
         $output = $assignedoptgroup;
     } else {
         $unassigned = $DB->get_records_sql($unassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
-            LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
+            LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
         $alrassigned = $DB->get_records_sql($alrassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
-            LIKE "%'.$data->search.'%" OR u.username LIKE "%'.$data->search.'%") ORDER BY u.firstname');
+            LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
         $unassignedselect = '';
         $unassignedstringvars = new stdClass();
         $unassignedstringvars->search = $data->search;
