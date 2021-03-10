@@ -24,7 +24,7 @@
 
 /**
  * Update FitCheck DB tables
- * 
+ *
  * @param int $oldversion
  */
 function xmldb_local_fitcheck_upgrade($oldversion) {

@@ -180,21 +180,21 @@ function local_fitcheck_load_classform($class) {
     $remainingcount = 0;
 
     foreach ($availablestudents as $student) {
-        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) && !isguestuser($student->id)) {
             $availableselect .= html_writer::tag('option', $student->firstname . " " .
                 $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
             $availablecount++;
         }
     }
     foreach ($classstudents as $student) {
-        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) && !isguestuser($student->id)) {
             $classselect .= html_writer::tag('option', $student->firstname . " " .
                 $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
             $classcount++;
         }
     }
     foreach ($remainingstudents as $student) {
-        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id)) {
+        if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) && !isguestuser($student->id)) {
             $remainingselect .= html_writer::tag('option', $student->firstname . " " .
                 $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
             $remainingcount++;

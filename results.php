@@ -302,7 +302,8 @@ echo html_writer::div(html_writer::div($testcanvas, 'col-lg-8') .
     html_writer::div($gradetable, 'col-lg-4 gradetable-container d-none my-auto'), 'row');
 if (has_capability('local/fitcheck:viewallresults', $PAGE->context)) {
     echo html_writer::tag('a', get_string('gobacktoclasspage', 'local_fitcheck'),
-        ['href' => new moodle_url('/local/fitcheck/classresults.php', ['id' => $student->classid]), 'class' => 'btn btn-secondary']);
+        ['href' => new moodle_url('/local/fitcheck/classresults.php', ['id' => $student->classid]),
+        'class' => 'btn btn-secondary']);
 }
 echo html_writer::script('' . $counttests . $canvasjs . '' .
     'function updateGradeTable(select) {
