@@ -107,7 +107,7 @@ if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $unassignedstudentid]);
     if ($student) {
         $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results}
-            WHERE userid = ' . $student->userid));
+            WHERE userid = ?', [$student->userid]));
         $student->classid = $id;
         $student->offset = $numbertests - $class->testnr;
         $DB->update_record('local_fitcheck_users', $student);

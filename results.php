@@ -76,7 +76,7 @@ foreach ($results as $result) {
 
 // Fetch highest and lowest test count.
 $highestsort = $DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results}
-    WHERE userid = ' . $userid . ' ORDER BY testnr DESC');
+    WHERE userid = ? ORDER BY testnr DESC', [$userid]);
 $highest = array_shift($highestsort)->testnr;
 $lowest = 1;
 
