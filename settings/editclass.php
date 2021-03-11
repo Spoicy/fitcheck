@@ -98,6 +98,9 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
         $id = $DB->insert_record('local_fitcheck_classes', $class);
         redirect('/local/fitcheck/settings/editclass.php?id=' . $id);
     } else {
+        if (has_capability('local/fitcheck:editteacher', $PAGE->context)) {
+            $class->teacherid = required_param('classteacherselect', PARAM_INT);
+        }
         $DB->update_record('local_fitcheck_classes', $class);
     }
 }
@@ -150,15 +153,34 @@ if ($class->agegroup) {
 $teacherdiv = '';
 if ($class->id > 0) {
     $teacher = $DB->get_record('user', ['id' => $class->teacherid]);
-    $teacherdiv = html_writer::div(
-        html_writer::div(html_writer::label(get_string('classteacher', 'local_fitcheck') . ': ', 'classteacher'),
-            'col-md-3 col-form-label d-flex label-classteacher') .
-        html_writer::div(
-            html_writer::tag('input', '', [
-                'type' => 'text', 'id' => 'classteacher', 'name' => 'classteacher', 'disabled' => '',
-                'class' => 'form-control', 'size' => '10', 'value' => "$teacher->firstname $teacher->lastname"
-            ]),
-            'col-md-9 form-inline'), 'form-group row');
+    if (has_capability('local/fitcheck:editteacher', $PAGE->context)) {
+        $allteachers = $DB->get_records_select('user', 'id != ?', [$teacher->id]);
+        $teacheroptions = html_writer::tag('option', fullname($teacher, true), 
+            ['selected' => 'selected', 'value' => $teacher->id]);
+        foreach ($allteachers as $allteacher) {
+            if (has_capability('local/fitcheck:editclasses', $PAGE->context, $allteacher)) {
+                $teacheroptions .= html_writer::tag('option', fullname($allteacher, true), 
+                    ['value' => $allteacher->id]);
+            }
+        }
+        $teacherselect = html_writer::tag('select', $teacheroptions, 
+            ['class' => 'select custom-select form-control', 'required' => '',
+            'id' => 'classteacherselect', 'name' => 'classteacherselect']);
+        $teacherdiv = html_writer::div(
+            html_writer::div(html_writer::label(get_string('classteacher', 'local_fitcheck') . ': ', 'classteacher'),
+                'col-md-3 col-form-label d-flex label-classteacher') .
+            html_writer::div($teacherselect, 'col-md-9 form-inline'), 'form-group row');
+    } else {
+        $teacherdiv = html_writer::div(
+            html_writer::div(html_writer::label(get_string('classteacher', 'local_fitcheck') . ': ', 'classteacher'),
+                'col-md-3 col-form-label d-flex label-classteacher') .
+            html_writer::div(
+                html_writer::tag('input', '', [
+                    'type' => 'text', 'id' => 'classteacher', 'name' => 'classteacher', 'disabled' => '',
+                    'class' => 'form-control', 'size' => '10', 'value' => "$teacher->firstname $teacher->lastname"
+                ]),
+                'col-md-9 form-inline'), 'form-group row');
+    }
 }
 $classinfoform = html_writer::div(
     html_writer::div(html_writer::label(get_string('classname', 'local_fitcheck') . ': ', 'classname'),

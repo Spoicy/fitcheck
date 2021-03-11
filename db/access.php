@@ -82,5 +82,12 @@ $capabilities = [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW
         ]
+    ],
+    'local/fitcheck:editteacher' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW
+        ]
     ]
 ];

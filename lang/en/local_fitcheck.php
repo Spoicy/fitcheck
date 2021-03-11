@@ -172,3 +172,4 @@ $string['fitcheck:editresults'] = 'Edit FitCheck User Results';
 $string['fitcheck:edittests'] = 'Edit FitCheck Tests';
 $string['fitcheck:viewallresults'] = 'View all FitCheck results';
 $string['fitcheck:viewdisabledtests'] = 'View Disabled FitCheck Tests';
+$string['fitcheck:editteacher'] = 'Change FitCheck Class Teachers';
