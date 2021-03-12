@@ -155,15 +155,15 @@ if ($class->id > 0) {
     $teacher = $DB->get_record('user', ['id' => $class->teacherid]);
     if (has_capability('local/fitcheck:editteacher', $PAGE->context)) {
         $allteachers = $DB->get_records_select('user', 'id != ?', [$teacher->id]);
-        $teacheroptions = html_writer::tag('option', fullname($teacher, true), 
+        $teacheroptions = html_writer::tag('option', fullname($teacher, true),
             ['selected' => 'selected', 'value' => $teacher->id]);
         foreach ($allteachers as $allteacher) {
             if (has_capability('local/fitcheck:editclasses', $PAGE->context, $allteacher)) {
-                $teacheroptions .= html_writer::tag('option', fullname($allteacher, true), 
+                $teacheroptions .= html_writer::tag('option', fullname($allteacher, true),
                     ['value' => $allteacher->id]);
             }
         }
-        $teacherselect = html_writer::tag('select', $teacheroptions, 
+        $teacherselect = html_writer::tag('select', $teacheroptions,
             ['class' => 'select custom-select form-control', 'required' => '',
             'id' => 'classteacherselect', 'name' => 'classteacherselect']);
         $teacherdiv = html_writer::div(
