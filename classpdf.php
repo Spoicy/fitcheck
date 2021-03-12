@@ -41,7 +41,7 @@ $class = $DB->get_record('local_fitcheck_classes', ['id' => $classid]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
 
 // Fetch students.
-$students = $DB->get_records_sql('SELECT u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
+$students = $DB->get_records_sql('SELECT lfu.userid, u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
     {local_fitcheck_users} lfu WHERE classid = ' . $classid .
     ' AND u.id = lfu.userid');
 

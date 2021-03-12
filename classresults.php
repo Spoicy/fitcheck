@@ -219,7 +219,7 @@ if ($view != 0) {
 $table->head[] = get_string('edit');
 $table->attributes['class'] = 'admintable generaltable table-sm';
 
-$students = $DB->get_records_sql('SELECT u.userid, u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
+$students = $DB->get_records_sql('SELECT lfu.userid, u.firstname, u.lastname, lfu.id, lfu.offset FROM {user} u,
     {local_fitcheck_users} lfu WHERE classid = ' . $id .
     ' AND u.id = lfu.userid ' . $sqlsort);
 
