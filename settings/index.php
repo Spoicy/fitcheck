@@ -37,7 +37,7 @@ $PAGE->navbar->add(get_string('settings', 'local_fitcheck'));
 
 // Display settings based on what capabilities are enabled.
 $li = '';
-if (has_capability('local/fitcheck:edittests', context_system::instance())) {
+if (has_capability('local/fitcheck:edittests', $PAGE->context)) {
     $li .= html_writer::tag('li',
         html_writer::tag('a', html_writer::tag('h5', get_string('browselisttests', 'local_fitcheck')),
             ['href' => new moodle_url('/local/fitcheck/settings/listtests.php')])) .
@@ -46,7 +46,7 @@ if (has_capability('local/fitcheck:edittests', context_system::instance())) {
             ['href' => new moodle_url('/local/fitcheck/settings/edittests.php?id=-1')]),
         );
 }
-if (has_capability('local/fitcheck:editclasses', context_system::instance())) {
+if (has_capability('local/fitcheck:editclasses', $PAGE->context)) {
     $li .= html_writer::tag('li',
         html_writer::tag('a', html_writer::tag('h5', get_string('browselistclasses', 'local_fitcheck')),
             ['href' => new moodle_url('/local/fitcheck/settings/listclasses.php')])) .
@@ -54,6 +54,11 @@ if (has_capability('local/fitcheck:editclasses', context_system::instance())) {
             html_writer::tag('a', html_writer::tag('h5', get_string('createnewclass', 'local_fitcheck')),
             ['href' => new moodle_url('/local/fitcheck/settings/editclass.php?id=-1')]),
         );
+}
+if (has_capability('local/fitcheck:deleteusers', $PAGE->context)) {
+    $li .= html_writer::tag('li',
+        html_writer::tag('a', html_writer::tag('h5', get_string('deleteresults', 'local_fitcheck')),
+            ['href' => new moodle_url('/local/fitcheck/settings/deleteresults.php')]));
 }
 
 // Output HTML.

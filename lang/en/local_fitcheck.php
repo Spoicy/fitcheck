@@ -154,6 +154,7 @@ $string['gobacktotestlist'] = 'Back to test list';
 $string['gotoresultspage'] = 'See results';
 $string['gobacktoclasslistmain'] = 'Back to class list';
 $string['gobacktoclasspage'] = 'Back to class page';
+$string['deleteresults'] = 'Delete FitCheck results';
 
 // Errors strings.
 $string['notassignederror'] = 'You have not been assigned a class yet.';
