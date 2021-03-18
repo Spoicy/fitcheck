@@ -155,6 +155,14 @@ $string['gotoresultspage'] = 'See results';
 $string['gobacktoclasslistmain'] = 'Back to class list';
 $string['gobacktoclasspage'] = 'Back to class page';
 $string['deleteresults'] = 'Delete FitCheck results';
+$string['deleteuserresults'] = 'Delete user\'s results';
+$string['studentstitle'] = 'Students';
+$string['agegrouptitle'] = 'Age group';
+$string['deleteagegroupresults'] = 'Delete age group\'s results';
+$string['confirmdeleteagegroup'] = 'Delete the age group \'{$a}\'?';
+$string['confirmdeleteagegroupfull'] = 'Are you sure you want to delete the age group \'{$a}\'? This action is irreversible and all classes including results will be permanently removed.';
+$string['confirmdeleteuser'] = 'Delete the results of \'{$a}\'?';
+$string['confirmdeleteuserfull'] = 'Are you sure you want to delete the results of the user \'{$a}\'? This action is irreversible and they will be removed from their class, in addition to the permanent deletion of their results.';
 
 // Errors strings.
 $string['notassignederror'] = 'You have not been assigned a class yet.';

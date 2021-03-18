@@ -278,6 +278,7 @@ function local_fitcheck_load_classform($class) {
             function searchAssigned() {
                 $("#assignedselect").css("background", "url('.$loading.') center center no-repeat");
                 var variables = {
+                    "pagemode": 0,
                     "search": $("#assignedselect_searchtext").val(),
                     "classid": "' . $class->id . '",
                     "teacherid": "' . $class->teacherid . '",
@@ -306,6 +307,7 @@ function local_fitcheck_load_classform($class) {
             function searchUnassigned() {
                 $("#unassignedselect").css("background", "url('.$loading.') center center no-repeat");
                 var variables = {
+                    "pagemode": 0,
                     "search": $("#unassignedselect_searchtext").val(),
                     "classid": "' . $class->id . '",
                     "teacherid": "' . $class->teacherid . '",

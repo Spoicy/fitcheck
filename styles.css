@@ -113,6 +113,10 @@ video.examplevideo {
     background-color: #FFE4B5;
 }
 
+.background-select-container {
+    background-color: rgba(0,0,0,.05);
+}
+
 @media (min-width: 1200px) {
     .gradetable {
         font-size: 17px;

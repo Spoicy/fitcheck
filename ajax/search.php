@@ -37,127 +37,149 @@ require_capability('local/fitcheck:editresults', context_system::instance());
 
 // Get the search parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
-if (!is_numeric($data->classid) || !is_numeric($data->teacherid)) {
-    print_error('invalidinputerror', 'local_fitcheck');
-}
-$selectbase = 'SELECT u.id, u.username, u.firstname, u.lastname';
-$assignedsqlbase = 'FROM {user} u
-    INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id
-    INNER JOIN {local_fitcheck_classes} lfc ON lfu.classid = lfc.id
-    WHERE lfu.classid = ' . $data->classid;
-$unassignedsqlbase = 'FROM {user} u
-    WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)
-    AND u.id != ' . $data->teacherid;
-
-$alrassignedsql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u
-    WHERE u.id NOT IN (SELECT u.id $unassignedsqlbase)" .
-    " AND u.id NOT IN (SELECT u.id $assignedsqlbase) AND u.id != $data->teacherid";
-$assignedsql = "$selectbase $assignedsqlbase";
-$unassignedsql = "$selectbase $unassignedsqlbase";
-
-// Prepare counts.
-$unassignedcount = 0;
-$assignedcount = 0;
-$alrassignedcount = 0;
-
-// Display the select differently depending on if search is empty or not.
-if ($data->search != "") {
-    // Differentiate between both selects.
-    if ($data->mode == 0) {
-        $assigned = $DB->get_records_sql($assignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
-             LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
-        $assignedselect = '';
-        $assignedstringvars = new stdClass();
-        $assignedstringvars->search = $data->search;
-        foreach ($assigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
-                    !isguestuser($student->id)) {
-                $assignedselect .= html_writer::tag('option', $student->firstname . " " .
-                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
-                $assignedcount++;
-            }
-        }
-        $assignedstringvars->count = $assignedcount;
-        $assignedoptgroup = html_writer::tag('optgroup', $assignedselect,
-            ['label' => get_string('assignedcountmatching', 'local_fitcheck', $assignedstringvars)]);
-        $output = $assignedoptgroup;
-    } else {
-        $unassigned = $DB->get_records_sql($unassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
-            LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
-        $alrassigned = $DB->get_records_sql($alrassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
-            LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
-        $unassignedselect = '';
-        $unassignedstringvars = new stdClass();
-        $unassignedstringvars->search = $data->search;
-        foreach ($unassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
-                    !isguestuser($student->id)) {
-                $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
-                $unassignedcount++;
-            }
-        }
-        $unassignedstringvars->count = $unassignedcount;
-        $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
-            ['label' => get_string('unassignedcountmatching', 'local_fitcheck', $unassignedstringvars)]);
-        $alrassignedselect = '';
-        $alrassignedstringvars = new stdClass();
-        $alrassignedstringvars->search = $data->search;
-        foreach ($alrassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
-                    !isguestuser($student->id)) {
-                $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
-                $alrassignedcount++;
-            }
-        }
-        $alrassignedstringvars->count = $alrassignedcount;
-        $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
-            ['label' => get_string('alrassignedcountmatching', 'local_fitcheck', $alrassignedstringvars), 'disabled' => '']);
-        $output = $unassignedoptgroup . $alrassignedoptgroup;
+if ($data->pagemode == 0) {
+    if (!is_numeric($data->classid) || !is_numeric($data->teacherid)) {
+        print_error('invalidinputerror', 'local_fitcheck');
     }
-} else {
-    // Differentiate between both selects.
-    if ($data->mode == 0) {
-        $assigned = $DB->get_records_sql($assignedsql . ' ORDER BY u.firstname');
-        $assignedselect = '';
-        foreach ($assigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
-                    !isguestuser($student->id)) {
-                $assignedselect .= html_writer::tag('option', $student->firstname . " " .
-                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
-                $assignedcount++;
+    $selectbase = 'SELECT u.id, u.username, u.firstname, u.lastname';
+    $assignedsqlbase = 'FROM {user} u
+        INNER JOIN {local_fitcheck_users} lfu ON lfu.userid = u.id
+        INNER JOIN {local_fitcheck_classes} lfc ON lfu.classid = lfc.id
+        WHERE lfu.classid = ' . $data->classid;
+    $unassignedsqlbase = 'FROM {user} u
+        WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)
+        AND u.id != ' . $data->teacherid;
+    
+    $alrassignedsql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u
+        WHERE u.id NOT IN (SELECT u.id $unassignedsqlbase)" .
+        " AND u.id NOT IN (SELECT u.id $assignedsqlbase) AND u.id != $data->teacherid";
+    $assignedsql = "$selectbase $assignedsqlbase";
+    $unassignedsql = "$selectbase $unassignedsqlbase";
+    
+    // Prepare counts.
+    $unassignedcount = 0;
+    $assignedcount = 0;
+    $alrassignedcount = 0;
+    
+    // Display the select differently depending on if search is empty or not.
+    if ($data->search != "") {
+        // Differentiate between both selects.
+        if ($data->mode == 0) {
+            $assigned = $DB->get_records_sql($assignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+                 LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
+            $assignedselect = '';
+            $assignedstringvars = new stdClass();
+            $assignedstringvars->search = $data->search;
+            foreach ($assigned as $student) {
+                if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                        !isguestuser($student->id)) {
+                    $assignedselect .= html_writer::tag('option', $student->firstname . " " .
+                        $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                    $assignedcount++;
+                }
             }
+            $assignedstringvars->count = $assignedcount;
+            $assignedoptgroup = html_writer::tag('optgroup', $assignedselect,
+                ['label' => get_string('assignedcountmatching', 'local_fitcheck', $assignedstringvars)]);
+            $output = $assignedoptgroup;
+        } else {
+            $unassigned = $DB->get_records_sql($unassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+                LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
+            $alrassigned = $DB->get_records_sql($alrassignedsql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+                LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
+            $unassignedselect = '';
+            $unassignedstringvars = new stdClass();
+            $unassignedstringvars->search = $data->search;
+            foreach ($unassigned as $student) {
+                if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                        !isguestuser($student->id)) {
+                    $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                        $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                    $unassignedcount++;
+                }
+            }
+            $unassignedstringvars->count = $unassignedcount;
+            $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
+                ['label' => get_string('unassignedcountmatching', 'local_fitcheck', $unassignedstringvars)]);
+            $alrassignedselect = '';
+            $alrassignedstringvars = new stdClass();
+            $alrassignedstringvars->search = $data->search;
+            foreach ($alrassigned as $student) {
+                if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                        !isguestuser($student->id)) {
+                    $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                        $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                    $alrassignedcount++;
+                }
+            }
+            $alrassignedstringvars->count = $alrassignedcount;
+            $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
+                ['label' => get_string('alrassignedcountmatching', 'local_fitcheck', $alrassignedstringvars), 'disabled' => '']);
+            $output = $unassignedoptgroup . $alrassignedoptgroup;
         }
-        $assignedoptgroup = html_writer::tag('optgroup', $assignedselect,
-            ['label' => get_string('assignedcount', 'local_fitcheck', $assignedcount)]);
-        $output = $assignedoptgroup;
     } else {
-        $unassigned = $DB->get_records_sql($unassignedsql . ' ORDER BY u.firstname');
-        $alrassigned = $DB->get_records_sql($alrassignedsql . ' ORDER BY u.firstname');
-        $unassignedselect = '';
-        foreach ($unassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
-                    !isguestuser($student->id)) {
-                $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
-                $unassignedcount++;
+        // Differentiate between both selects.
+        if ($data->mode == 0) {
+            $assigned = $DB->get_records_sql($assignedsql . ' ORDER BY u.firstname');
+            $assignedselect = '';
+            foreach ($assigned as $student) {
+                if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                        !isguestuser($student->id)) {
+                    $assignedselect .= html_writer::tag('option', $student->firstname . " " .
+                        $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                    $assignedcount++;
+                }
             }
-        }
-        $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
-            ['label' => get_string('unassignedcount', 'local_fitcheck', $unassignedcount)]);
-        foreach ($alrassigned as $student) {
-            if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
-                    !isguestuser($student->id)) {
-                $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
-                    $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
-                $alrassignedcount++;
+            $assignedoptgroup = html_writer::tag('optgroup', $assignedselect,
+                ['label' => get_string('assignedcount', 'local_fitcheck', $assignedcount)]);
+            $output = $assignedoptgroup;
+        } else {
+            $unassigned = $DB->get_records_sql($unassignedsql . ' ORDER BY u.firstname');
+            $alrassigned = $DB->get_records_sql($alrassignedsql . ' ORDER BY u.firstname');
+            $unassignedselect = '';
+            foreach ($unassigned as $student) {
+                if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                        !isguestuser($student->id)) {
+                    $unassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                        $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                    $unassignedcount++;
+                }
             }
+            $unassignedoptgroup = html_writer::tag('optgroup', $unassignedselect,
+                ['label' => get_string('unassignedcount', 'local_fitcheck', $unassignedcount)]);
+            foreach ($alrassigned as $student) {
+                if (!has_capability('local/fitcheck:editclasses', context_system::instance(), $student->id) &&
+                        !isguestuser($student->id)) {
+                    $alrassignedselect .= html_writer::tag('option', $student->firstname . " " .
+                        $student->lastname . " (" . $student->username . ")", ['value' => $student->id]);
+                    $alrassignedcount++;
+                }
+            }
+            $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
+                ['label' => get_string('alrassignedcount', 'local_fitcheck', $alrassignedcount), 'disabled' => '']);
+            $output = $unassignedoptgroup . $alrassignedoptgroup;
         }
-        $alrassignedoptgroup = html_writer::tag('optgroup', $alrassignedselect,
-            ['label' => get_string('alrassignedcount', 'local_fitcheck', $alrassignedcount), 'disabled' => '']);
-        $output = $unassignedoptgroup . $alrassignedoptgroup;
     }
+    echo json_encode($output);
+} else if ($data->pagemode == 1) {
+    $sql = 'SELECT u.* FROM {user} u
+        INNER JOIN {local_fitcheck_users} lfu
+        ON u.id = lfu.userid
+        INNER JOIN {local_fitcheck_classes} lfc
+        ON lfu.classid = lfc.id
+        WHERE lfc.status = 1';
+    $output = '';
+    if ($data->search != "") {
+        $students = $DB->get_records_sql($sql . ' AND (CONCAT(u.firstname, " ", u.lastname)
+        LIKE ? OR u.username LIKE ?) ORDER BY u.firstname', ["%$data->search%", "%$data->search%"]);
+    } else {
+        $students = $DB->get_records_sql($sql . ' ORDER BY u.firstname');
+    }
+    foreach ($students as $student) {
+        if (count($DB->get_records('local_fitcheck_results', ['userid' => $student->id]))) {
+            $output .= html_writer::tag('option', fullname($student) . " ($student->username)",
+                ['value' => $student->id]);
+        }
+    }
+    echo json_encode($output);
 }
-
-echo json_encode($output);
