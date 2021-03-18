@@ -43,7 +43,8 @@ $deleteuser = optional_param('deleteuser', false, PARAM_BOOL);
 $deleteuserconfirm = optional_param('deleteuserconfirm', '', PARAM_ALPHANUM);
 
 $studentoptions = '';
-$agegroupoptions = '';
+$agegroupoptions = html_writer::tag('option', get_string('chooseagegroup', 'local_fitcheck'), 
+    ['value' => '', 'disabled' => '', 'selected' => '']);
 
 $loading = $OUTPUT->image_url("i/loading", "core");
 
@@ -57,7 +58,7 @@ if ($deleteagegroup || $deleteagegroupconfirm) {
             'sesskey' => sesskey(), 'deleteagegroupselect' => $deleteagegroupselect);
         $returnurl = new moodle_url('/local/fitcheck/settings/deleteresults.php');
         $deleteurl = new moodle_url($returnurl, $optionsyes);
-        $deletebutton = new single_button($deleteurl, get_string('starttest', 'local_fitcheck'), 'post');
+        $deletebutton = new single_button($deleteurl, get_string('deleteagegroupresults', 'local_fitcheck'), 'post');
 
         echo $OUTPUT->confirm(get_string('confirmdeleteagegroupfull', 'local_fitcheck',
             substr($deleteagegroupselect, 0, 4) . '/' . substr($deleteagegroupselect, 4, 2)), $deletebutton, $returnurl);
@@ -87,7 +88,7 @@ if ($deleteagegroup || $deleteagegroupconfirm) {
             'sesskey' => sesskey(), 'deleteusersselect' => $deleteusersselect);
         $returnurl = new moodle_url('/local/fitcheck/settings/deleteresults.php');
         $deleteurl = new moodle_url($returnurl, $optionsyes);
-        $deletebutton = new single_button($deleteurl, get_string('starttest', 'local_fitcheck'), 'post');
+        $deletebutton = new single_button($deleteurl, get_string('deleteuserresults', 'local_fitcheck'), 'post');
 
         echo $OUTPUT->confirm(get_string('confirmdeleteuserfull', 'local_fitcheck', fullname($user)), $deletebutton, $returnurl);
         echo $OUTPUT->footer();
@@ -126,10 +127,11 @@ foreach ($agegroups as $agegroup) {
 }
 
 $selectagegroups = html_writer::tag('select', $agegroupoptions,
-    ['class' => 'form-control w-50 mx-auto', 'id' => 'deleteagegroupselect', 'name' => 'deleteagegroupselect']);
+    ['class' => 'form-control w-50 mx-auto', 'id' => 'deleteagegroupselect',
+        'name' => 'deleteagegroupselect', 'onChange' => 'enableAgegroup()']);
 $selectstudents = html_writer::tag('select', $studentoptions,
     ['multiple' => 'multiple', 'class' => 'form-control', 'id' => 'deleteusersselect',
-    'name' => 'deleteusersselect', 'size' => '15']);
+        'name' => 'deleteusersselect', 'size' => '15', 'onChange' => 'enableUser()']);
 
 $html = html_writer::div(
     html_writer::div(html_writer::tag('h4', get_string('agegrouptitle', 'local_fitcheck'),
@@ -143,7 +145,7 @@ $html = html_writer::div(
             $selectagegroups .
             html_writer::tag('button', get_string('deleteagegroupresults', 'local_fitcheck'),
                 ['class' => 'btn btn-danger w-50 mt-2 mx-auto d-block', 'type' => 'submit',
-                    'id' => 'deleteagegroup', 'name' => 'deleteagegroup', 'value' => 1])),
+                    'id' => 'deleteagegroup', 'name' => 'deleteagegroup', 'value' => 1, 'disabled' => ''])),
         'col-md-6 my-auto pb-4') .
     html_writer::div(
         html_writer::div($selectstudents, 'background-select-container') .
@@ -158,11 +160,10 @@ $html = html_writer::div(
             'form-inline classsearch my-1') .
         html_writer::tag('button', get_string('deleteuserresults', 'local_fitcheck'),
             ['class' => 'btn btn-danger w-100', 'type' => 'submit',
-                'id' => 'deleteuser', 'name' => 'deleteuser', 'value' => 1])
+                'id' => 'deleteuser', 'name' => 'deleteuser', 'value' => 1, 'disabled' => ''])
     , 'col-md-6 justify-content-center'), 'row');
 
 echo $OUTPUT->header();
-//echo $html;
 echo html_writer::tag('form', $html, ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
 echo html_writer::script('
     var timer;
@@ -200,6 +201,12 @@ echo html_writer::script('
             $("#deleteusers_searchtext").val("");
             searchUsers();
         }
+    }
+    function enableAgegroup() {
+        $("#deleteagegroup").prop("disabled", false);
+    }
+    function enableUser() {
+        $("#deleteuser").prop("disabled", false);
     }
 ');
 echo $OUTPUT->footer();

@@ -163,6 +163,7 @@ $string['confirmdeleteagegroup'] = 'Delete the age group \'{$a}\'?';
 $string['confirmdeleteagegroupfull'] = 'Are you sure you want to delete the age group \'{$a}\'? This action is irreversible and all classes including results will be permanently removed.';
 $string['confirmdeleteuser'] = 'Delete the results of \'{$a}\'?';
 $string['confirmdeleteuserfull'] = 'Are you sure you want to delete the results of the user \'{$a}\'? This action is irreversible and they will be removed from their class, in addition to the permanent deletion of their results.';
+$string['chooseagegroup'] = 'Choose age group...';
 
 // Errors strings.
 $string['notassignederror'] = 'You have not been assigned a class yet.';

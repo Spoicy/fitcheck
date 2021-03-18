@@ -269,11 +269,9 @@ function local_fitcheck_load_classform($class) {
             var timer;
             function enableAssigned() {
                 document.getElementById("remove").removeAttribute("disabled", true);
-                console.log("test");
             }
             function enableUnassigned() {
                 document.getElementById("add").removeAttribute("disabled", true);
-                console.log("test");
             }
             function searchAssigned() {
                 $("#assignedselect").css("background", "url('.$loading.') center center no-repeat");
