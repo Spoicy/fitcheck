@@ -200,6 +200,8 @@ if ($student) {
     if ($class && $class->testnr + $student->offset) {
         $resulttocheck = $DB->get_record('local_fitcheck_results',
             ['testid' => $test->id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset]);
+    } else if ($class->testnr + $student->offset == 0) {
+        $resulttocheck = true;
     }
 }
 

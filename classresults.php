@@ -53,7 +53,7 @@ if ($dir == 'asc') {
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $id]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
 
-if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresults', context_system::instance())) {
+if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteusers', context_system::instance())) {
     print_error('accessdenied', 'admin');
 }
 
@@ -74,7 +74,7 @@ if ($newtest || $newtestconfirm) {
             }
         }
     }
-    if ($completecheck) {
+    if ($completecheck || $class->testnr == 0) {
         $class->testnr++;
         $DB->update_record('local_fitcheck_classes', $class);
     } else {
@@ -412,5 +412,8 @@ echo html_writer::tag('form', $select . $hidinputs . $newtestbutton . $printbutt
     ['method' => 'get', 'action' => '#', 'name' => 'selectForm']);
 echo html_writer::table($table);
 echo html_writer::tag('a', get_string('gobacktoclasslistmain', 'local_fitcheck'),
-    ['href' => new moodle_url ('/local/fitcheck/settings/listclasses.php'), 'class' => 'btn btn-secondary float-right']);
+        ['href' => new moodle_url ('/local/fitcheck/settings/listclasses.php'), 'class' => 'btn btn-secondary float-right']) .
+    html_writer::tag('a', get_string('gotoclasssettings', 'local_fitcheck'),
+        ['href' => new moodle_url ('/local/fitcheck/settings/editclass.php', ['id' => $class->id]),
+            'class' => 'btn btn-secondary float-right mr-2']);
 echo $OUTPUT->footer();

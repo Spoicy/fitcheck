@@ -140,7 +140,7 @@ if (optional_param('remove', false, PARAM_BOOL) && $assignedstudentid && confirm
     foreach ($teststocheck as $test) {
         $resulttocheck = $DB->get_record('local_fitcheck_results',
             ['testnr' => $class->testnr + $student->offset, 'userid' => $student->userid, 'testid' => $test->id]);
-        if (!$resulttocheck) {
+        if (!$resulttocheck && $class->testnr + $student->offset != 0) {
             $newresult = new stdClass();
             $newresult->result = null;
             $newresult->testnr = $class->testnr + $student->offset;
@@ -236,8 +236,9 @@ $classinfoform = html_writer::div(
             html_writer::tag('input', '', ['type' => 'submit', 'value' => get_string('saveclassinfo', 'local_fitcheck'),
                 'class' => 'btn btn-primary mr-1', 'id' => 'saveinfo', 'name' => 'saveinfo']) .
             html_writer::tag('a', get_string('gobacktoclasslist', 'local_fitcheck'),
-                ['class' => 'btn btn-secondary', 'id' => 'goback', 'name' => 'back',
-                'href' => new moodle_url('/local/fitcheck/settings/listclasses.php')]),
+                ['class' => 'btn btn-secondary mr-1', 'href' => new moodle_url('/local/fitcheck/settings/listclasses.php')]) .
+            html_writer::tag('a', get_string('gotoclassresults', 'local_fitcheck'), ['class' => 'btn btn-secondary',
+                'href' => new moodle_url('/local/fitcheck/classresults.php', ['id' => $class->id])]),
             'col-md-9'), 'form-group row'
     );
 
