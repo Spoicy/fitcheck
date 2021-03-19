@@ -37,36 +37,36 @@ $PAGE->navbar->add('FitCheck', new moodle_url('/local/fitcheck'));
 $PAGE->navbar->add(get_string('settings', 'local_fitcheck'), new moodle_url('/local/fitcheck/settings'));
 $PAGE->navbar->add(get_string('deleteresults', 'local_fitcheck'));
 
-$deleteagegroup = optional_param('deleteagegroup', false, PARAM_BOOL);
-$deleteagegroupconfirm = optional_param('deleteagegroupconfirm', '', PARAM_ALPHANUM);
+$deleteendyear = optional_param('deleteendyear', false, PARAM_BOOL);
+$deleteendyearconfirm = optional_param('deleteendyearconfirm', '', PARAM_ALPHANUM);
 $deleteuser = optional_param('deleteuser', false, PARAM_BOOL);
 $deleteuserconfirm = optional_param('deleteuserconfirm', '', PARAM_ALPHANUM);
 
 $studentoptions = '';
-$agegroupoptions = html_writer::tag('option', get_string('chooseagegroup', 'local_fitcheck'), 
+$endyearoptions = html_writer::tag('option', get_string('chooseendyear', 'local_fitcheck'), 
     ['value' => '', 'disabled' => '', 'selected' => '']);
 
 $loading = $OUTPUT->image_url("i/loading", "core");
 
-if ($deleteagegroup || $deleteagegroupconfirm) {
-    if ($deleteagegroupconfirm != md5($deleteagegroup)) {
+if ($deleteendyear || $deleteendyearconfirm) {
+    if ($deleteendyearconfirm != md5($deleteendyear)) {
         echo $OUTPUT->header();
-        $deleteagegroupselect = required_param('deleteagegroupselect', PARAM_INT);
-        echo $OUTPUT->heading(get_string('confirmdeleteagegroup', 'local_fitcheck',
-            substr($deleteagegroupselect, 0, 4) . '/' . substr($deleteagegroupselect, 4, 2)));
-        $optionsyes = array('deleteagegroup' => $deleteagegroup, 'deleteagegroupconfirm' => md5($deleteagegroup),
-            'sesskey' => sesskey(), 'deleteagegroupselect' => $deleteagegroupselect);
+        $deleteendyearselect = required_param('deleteendyearselect', PARAM_INT);
+        echo $OUTPUT->heading(get_string('confirmdeleteendyear', 'local_fitcheck',
+            $deleteendyearselect));
+        $optionsyes = array('deleteendyear' => $deleteendyear, 'deleteendyearconfirm' => md5($deleteendyear),
+            'sesskey' => sesskey(), 'deleteendyearselect' => $deleteendyearselect);
         $returnurl = new moodle_url('/local/fitcheck/settings/deleteresults.php');
         $deleteurl = new moodle_url($returnurl, $optionsyes);
-        $deletebutton = new single_button($deleteurl, get_string('deleteagegroupresults', 'local_fitcheck'), 'post');
+        $deletebutton = new single_button($deleteurl, get_string('deleteendyearresults', 'local_fitcheck'), 'post');
 
-        echo $OUTPUT->confirm(get_string('confirmdeleteagegroupfull', 'local_fitcheck',
-            substr($deleteagegroupselect, 0, 4) . '/' . substr($deleteagegroupselect, 4, 2)), $deletebutton, $returnurl);
+        echo $OUTPUT->confirm(get_string('confirmdeleteendyearfull', 'local_fitcheck',
+            $deleteendyearselect), $deletebutton, $returnurl);
         echo $OUTPUT->footer();
         die;
     } else {
-        $todelete = required_param('deleteagegroupselect', PARAM_INT);
-        $deleteclasses = $DB->get_records('local_fitcheck_classes', ['agegroup' => $todelete]);
+        $todelete = required_param('deleteendyearselect', PARAM_INT);
+        $deleteclasses = $DB->get_records('local_fitcheck_classes', ['endyear' => $todelete]);
         foreach ($deleteclasses as $class) {
             $deletestudents = $DB->get_records('local_fitcheck_users', ['classid' => $class->id]);
             foreach ($deletestudents as $student) {
@@ -104,8 +104,8 @@ if ($deleteagegroup || $deleteagegroupconfirm) {
 
 $students = $DB->get_records_sql('SELECT u.* FROM {user} u ORDER BY u.firstname');
 
-$agegroups = $DB->get_records_sql('SELECT DISTINCT lfc.agegroup FROM {local_fitcheck_classes} lfc
-    WHERE lfc.status = 1 AND lfc.agegroup IS NOT NULL ORDER BY lfc.agegroup ASC');
+$endyears = $DB->get_records_sql('SELECT DISTINCT lfc.endyear FROM {local_fitcheck_classes} lfc
+    WHERE lfc.status = 1 AND lfc.endyear IS NOT NULL ORDER BY lfc.endyear ASC');
 
 foreach ($students as $student) {
     $classidcheck = $DB->get_record('local_fitcheck_users', ['userid' => $student->id]);
@@ -120,21 +120,19 @@ foreach ($students as $student) {
     }
 }
 
-foreach ($agegroups as $agegroup) {
-    $agegroupoptions .= html_writer::tag('option',
-        substr($agegroup->agegroup, 0, 4) . '/' . substr($agegroup->agegroup, 4, 2),
-        ['value' => $agegroup->agegroup]);
+foreach ($endyears as $endyear) {
+    $endyearoptions .= html_writer::tag('option', $endyear->endyear, ['value' => $endyear->endyear]);
 }
 
-$selectagegroups = html_writer::tag('select', $agegroupoptions,
-    ['class' => 'form-control w-50 mx-auto', 'id' => 'deleteagegroupselect',
-        'name' => 'deleteagegroupselect', 'onChange' => 'enableAgegroup()']);
+$selectendyears = html_writer::tag('select', $endyearoptions,
+    ['class' => 'form-control w-50 mx-auto', 'id' => 'deleteendyearselect',
+        'name' => 'deleteendyearselect', 'onChange' => 'enableEndyear()']);
 $selectstudents = html_writer::tag('select', $studentoptions,
     ['multiple' => 'multiple', 'class' => 'form-control', 'id' => 'deleteusersselect',
         'name' => 'deleteusersselect', 'size' => '15', 'onChange' => 'enableUser()']);
 
 $html = html_writer::div(
-    html_writer::div(html_writer::tag('h4', get_string('agegrouptitle', 'local_fitcheck'),
+    html_writer::div(html_writer::tag('h4', get_string('endyeartitle', 'local_fitcheck'),
         ['class' => 'font-weight-bold text-center']), 'col-md-6') .
     html_writer::div(html_writer::tag('h4', get_string('studentstitle', 'local_fitcheck'),
         ['class' => 'font-weight-bold text-center']), 'col-md-6')
@@ -142,10 +140,10 @@ $html = html_writer::div(
     html_writer::div(
     html_writer::div(
         html_writer::div(
-            $selectagegroups .
-            html_writer::tag('button', get_string('deleteagegroupresults', 'local_fitcheck'),
+            $selectendyears .
+            html_writer::tag('button', get_string('deleteendyearresults', 'local_fitcheck'),
                 ['class' => 'btn btn-danger w-50 mt-2 mx-auto d-block', 'type' => 'submit',
-                    'id' => 'deleteagegroup', 'name' => 'deleteagegroup', 'value' => 1, 'disabled' => ''])),
+                    'id' => 'deleteendyear', 'name' => 'deleteendyear', 'value' => 1, 'disabled' => ''])),
         'col-md-6 my-auto pb-4') .
     html_writer::div(
         html_writer::div($selectstudents, 'background-select-container') .
@@ -202,8 +200,8 @@ echo html_writer::script('
             searchUsers();
         }
     }
-    function enableAgegroup() {
-        $("#deleteagegroup").prop("disabled", false);
+    function enableEndyear() {
+        $("#deleteendyear").prop("disabled", false);
     }
     function enableUser() {
         $("#deleteuser").prop("disabled", false);
