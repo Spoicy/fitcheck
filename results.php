@@ -322,7 +322,6 @@ echo html_writer::script('' . $counttests . $canvasjs . '' .
         $(".canvascurrent").addClass("d-none").removeClass("canvascurrent");
         $(newSelect).addClass("selectcurrent").removeClass("d-none");
         $(newCanvas).addClass("canvascurrent").removeClass("d-none");
-        console.log("ye?");
         $
     }
 ');

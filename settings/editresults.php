@@ -109,7 +109,6 @@ echo html_writer::script('
     $(document).ready(function() {
         $(".cell").on("input", function(e) {
             $("#" + e.target.id).addClass("editedcell");
-            console.log(e.target.id);
         });
         $("#updateresults").on("click", function(e) {
             $(".generaltable").css("background", "url('.$loading.') center center no-repeat");
@@ -131,13 +130,9 @@ echo html_writer::script('
                 success: function() {
                     $(".editedcell").removeClass("editedcell");
                     $(".generaltable").css("background", "");
-                    console.log("yes!");
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     $(".generaltable").css("background", "");
-                    console.log(errorThrown);
-                    console.log(jqXHR);
-                    console.log(textStatus);
                 }
             });
         });

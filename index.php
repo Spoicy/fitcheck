@@ -120,7 +120,6 @@ if ($i != 0) {
 $html .= html_writer::div($cards, 'card-deck');
 $html .= html_writer::script('
     $(document).ready(function() {
-        console.log("setting height");
         $(".thumbnail-empty").css("height", 0);
         $(".thumbnail-empty img").css("height", 0);
     });
