@@ -175,6 +175,7 @@ $string['teacheriderror'] = 'You do not have access to managing this class.';
 $string['agegrouperror'] = 'The age group does not follow pattern as shown by the example text.';
 $string['endyearerror'] = 'The graduation year is not a valid year.';
 $string['invalidinputerror'] = 'The received input is invalid.';
+$string['noresultserror'] = 'You haven\'t submitted any results yet.';
 
 // Capability strings.
 $string['fitcheck:deletetests'] = 'Delete FitCheck Tests';

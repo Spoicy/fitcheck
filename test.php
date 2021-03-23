@@ -31,6 +31,17 @@ require_login();
 $id = required_param('id', PARAM_INT);
 $result = optional_param('result', -100000, PARAM_FLOAT);
 $test = $DB->get_record('local_fitcheck_tests', ['id' => $id]);
+if (!has_capability('local/fitcheck:edittests', context_system::instance())) {
+    $student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
+    if ($student) {
+        $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
+        if ($test->gender != $class->gender) {
+            print_error('accessdenied', 'admin');
+        }
+    } else {
+        print_error('accessdenied', 'admin');
+    }
+}
 $mainpage = new moodle_url('/local/fitcheck/');
 
 

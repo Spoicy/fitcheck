@@ -55,6 +55,10 @@ if (!$student && has_capability('local/fitcheck:viewallresults', context_system:
     print_error('notassignederror', 'local_fitcheck');
 }
 
+if (!count($results)) {
+    print_error('noresultserror', 'local_fitcheck');
+}
+
 $testnames = '';
 $testids = [];
 $testidslabels = [];
