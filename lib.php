@@ -268,10 +268,10 @@ function local_fitcheck_load_classform($class) {
         html_writer::script('
             var timer;
             function enableAssigned() {
-                document.getElementById("remove").removeAttribute("disabled", true);
+                $("#remove").prop("disabled", false);
             }
             function enableUnassigned() {
-                document.getElementById("add").removeAttribute("disabled", true);
+                $("#add").prop("disabled", false);
             }
             function searchAssigned() {
                 $("#assignedselect").css("background", "url('.$loading.') center center no-repeat");
@@ -294,9 +294,11 @@ function local_fitcheck_load_classform($class) {
                         success: function(data) {
                             $("select#assignedselect").html(data);
                             $("#assignedselect").css("background", "");
+                            $("#remove").prop("disabled", true);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             $("#assignedselect").css("background", "");
+                            $("#remove").prop("disabled", true);
                         }
                     })
                 }, 500);
@@ -323,9 +325,11 @@ function local_fitcheck_load_classform($class) {
                         success: function(data) {
                             $("select#unassignedselect").html(data);
                             $("#unassignedselect").css("background", "");
+                            $("#add").prop("disabled", true);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             $("#unassignedselect").css("background", "");
+                            $("#add").prop("disabled", true);
                         }
                     })
                 }, 500);

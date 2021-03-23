@@ -298,9 +298,9 @@ foreach ($students as $student) {
             }
         }
     }
-    $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php?id=' . $student->id),
+    $row[] = html_writer::link(new moodle_url('/local/fitcheck/settings/editresults.php', ['id' => $student->id]),
         $OUTPUT->pix_icon('i/edit', get_string('edit'))) .
-        html_writer::link(new moodle_url('/local/fitcheck/results.php?id=' . $student->userid),
+        html_writer::link(new moodle_url('/local/fitcheck/results.php', ['id' => $student->userid]),
         $OUTPUT->pix_icon('t/hide', get_string('viewstudentresults', 'local_fitcheck')));
     $table->data[] = $row;
 }
@@ -397,7 +397,7 @@ if ($class->testnr) {
 $printbutton = html_writer::tag('a', get_string('printresults', 'local_fitcheck'),
     ['name' => 'printpdf', 'id' => 'printpdf',
         'href' => new moodle_url('/local/fitcheck/classpdf.php', ['classid' => $class->id, 'testnr' => $class->testnr]),
-        'class' => 'btn btn-secondary float-right mr-2']);
+        'class' => 'btn btn-secondary float-right mr-2', 'target' => '_blank']);
 
 $newtestbutton = html_writer::tag('button', get_string('startnewtest', 'local_fitcheck'),
     ['name' => 'newtest', 'id' => 'newtest', 'type' => 'submit', 'class' => 'btn btn-secondary float-right', 'value' => 1]);

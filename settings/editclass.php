@@ -253,8 +253,6 @@ if ($class->id != -1) {
 $form = html_writer::tag('form', $classinfoform . $classform,
     ['action' => new moodle_url($PAGE->url, ['sesskey' => sesskey()]), 'method' => 'post', 'class' => 'fitcheck-classform']);
 
-echo '<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>';
 echo $OUTPUT->header();
 echo $form;
 echo $OUTPUT->footer();

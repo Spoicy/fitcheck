@@ -185,11 +185,13 @@ echo html_writer::script('
                     $("select#deleteusersselect").html(data);
                     $("#deleteusersselect").css("background", "");
                     $("#deleteusersselect").prop("disabled", false);
+                    $("#deleteuser").prop("disabled", true);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     $("#deleteusersselect").css("background", "");
                     document.getElementById("remove").removeAttribute("disabled", true);
                     $("#deleteusersselect").prop("disabled", false);
+                    $("#deleteuser").prop("disabled", true);
                 }
             })
         }, 500);
