@@ -167,7 +167,7 @@ $string['chooseendyear'] = 'Choose graduation year...';
 $string['gotoclassresults'] = 'View class results';
 $string['gotoclasssettings'] = 'Edit class';
 
-// Errors strings.
+// Error strings.
 $string['notassignederror'] = 'You have not been assigned a class yet.';
 $string['studentnotfounderror'] = 'The requested student has no results.';
 $string['iderror'] = 'Provided ID was not a number.';

@@ -46,3 +46,6 @@ $string['gobacktotestlist'] = 'Zur Testliste';
 $string['gobacktoclasslistmain'] = 'Zur Klassenliste';
 $string['gotoresultspage'] = 'Zur Resultatseite';
 $string['gobacktoclasspage'] = 'Zur Klassenseite';
+
+// Error strings.
+$string['notassignederror'] = 'Sie sind noch nicht zu einer Klasse zugewiesen.';

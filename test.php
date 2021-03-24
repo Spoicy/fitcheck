@@ -35,11 +35,13 @@ if (!has_capability('local/fitcheck:edittests', context_system::instance())) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
     if ($student) {
         $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
-        if ($test->gender != $class->gender) {
+        if (!$class) {
+            print_error('notassignederror', 'local_fitcheck');
+        } else if ($test->gender != $class->gender) {
             print_error('accessdenied', 'admin');
         }
     } else {
-        print_error('accessdenied', 'admin');
+        print_error('notassignederror', 'local_fitcheck');
     }
 }
 $mainpage = new moodle_url('/local/fitcheck/');
@@ -62,7 +64,8 @@ $returnurl = new moodle_url('/local/fitcheck');
 $urlwithsess = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
 $resulterror = '';
 
-if (($result != -100000 && $result >= 0) || ($test->method == 2 && $result != -100000)) {
+if ((($result != -100000 && $result >= 0) || ($test->method == 2 && $result != -100000)) &&
+        !$DB->get_record('local_fitcheck_results', ['testid' => $id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset])) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
     $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
     $resulttoadd = new stdClass();
