@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Student search in edit class view
+ * Result update for an individual student
  *
  * @copyright 2021 Jae Funke
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,16 +37,20 @@ require_capability('local/fitcheck:editresults', context_system::instance());
 
 // Get the results parameter.
 $data = json_decode(required_param('data', PARAM_RAW));
+$changed = array();
 
 foreach ($data as $result) {
     $resultupdate = new stdClass();
     $resultupdate->id = $result->id;
-    if ($result->value == '-' || !is_numeric($result->value)) {
+    if ($result->value == '-' || $result->value == '') {
         $resultupdate->result = null;
-    } else {
+        $changed[] = 'td#' . $result->id;
+        $DB->update_record('local_fitcheck_results', $resultupdate);
+    } else if (is_numeric($result->value)) {
         $resultupdate->result = $result->value;
+        $changed[] = 'td#' . $result->id;
+        $DB->update_record('local_fitcheck_results', $resultupdate);
     }
-    $DB->update_record('local_fitcheck_results', $resultupdate);
 }
 
-echo json_encode(true);
+echo json_encode($changed);

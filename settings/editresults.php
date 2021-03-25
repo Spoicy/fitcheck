@@ -127,8 +127,10 @@ echo html_writer::script('
                 data: {
                     "data": data
                 },
-                success: function() {
-                    $(".editedcell").removeClass("editedcell");
+                success: function(changed) {
+                    $.each(changed, function(index, value) {
+                        $(value).removeClass("editedcell");
+                    });
                     $(".generaltable").css("background", "");
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
