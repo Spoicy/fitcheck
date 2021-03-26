@@ -28,8 +28,13 @@ require_login();
 !isguestuser($USER->id) || print_error('noguest');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);
+$student = $DB->get_record('local_fitcheck_users', ['userid' => $userid]);
 if ($userid != $USER->id) {
     require_capability('local/fitcheck:viewallresults', context_system::instance());
+    $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
+    if (!($class && $class->teacherid == $USER->id)) {
+        require_capability('local/fitcheck:deleteusers', context_system::instance());
+    }
 }
 
 // Set page values.
@@ -48,7 +53,7 @@ $pref = 0;
 // Fetch tests and user results from database.
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $pref, 'status' => 1]);
 $results = $DB->get_records('local_fitcheck_results', ['userid' => $userid]);
-$student = $DB->get_record('local_fitcheck_users', ['userid' => $userid]);
+
 if (!$student && has_capability('local/fitcheck:viewallresults', context_system::instance())) {
     print_error('studentnotfounderror', 'local_fitcheck');
 } else if (!$student) {

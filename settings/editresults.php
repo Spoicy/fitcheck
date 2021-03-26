@@ -49,7 +49,7 @@ if ($student->classid) {
 }
 $tests = $DB->get_records('local_fitcheck_tests', ['gender' => $class->gender, 'status' => 1]);
 
-if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteresults', context_system::instance())) {
+if ($class->teacherid != $USER->id && !has_capability('local/fitcheck:deleteusers', context_system::instance())) {
     print_error('accessdenied', 'admin');
 }
 

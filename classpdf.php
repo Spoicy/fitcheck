@@ -31,6 +31,7 @@ $PAGE->set_url('/local/fitcheck/ajax/classpdf.php');
 
 // Check access.
 require_login();
+require_capability('local/fitcheck:editresults', $PAGE->context);
 
 // Get the search parameter.
 $classid = required_param('classid', PARAM_INT);
@@ -39,6 +40,12 @@ $testnr = required_param('testnr', PARAM_INT);
 // Fetch class and tests from DB.
 $class = $DB->get_record('local_fitcheck_classes', ['id' => $classid]);
 $tests = $DB->get_records('local_fitcheck_tests', ['status' => 1, 'gender' => $class->gender]);
+
+$teacher = $DB->get_record('user', ['id' => $class->teacherid]);
+
+if (!$teacher) {
+    require_capability('local/fitcheck:deleteusers', $PAGE->context);
+}
 
 // Fetch students.
 $students = $DB->get_records_sql('SELECT lfu.userid, u.firstname, u.lastname, lfu.id, lfu.offset, lfu.userid FROM {user} u,
