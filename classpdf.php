@@ -104,7 +104,7 @@ foreach ($students as $student) {
 $html = html_writer::start_tag('link', ['rel' => 'stylesheet', 'type' => 'text/css',
     'href' => new moodle_url('/local/fitcheck/styles.css')]) .
     html_writer::tag('h2', get_string('class', 'local_fitcheck') . ': ' . $class->name) .
-    html_writer::tag('h4', get_string('test', 'local_fitcheck') . ' #' . $testnr) .
+    html_writer::tag('h4', get_string('testnumber', 'local_fitcheck', $testnr)) .
     html_writer::table($table);
 
 $pdf->writeHTML($html);
