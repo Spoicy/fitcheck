@@ -65,7 +65,8 @@ $urlwithsess = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
 $resulterror = '';
 
 if ((($result != -100000 && $result >= 0) || ($test->method == 2 && $result != -100000)) &&
-        !$DB->get_record('local_fitcheck_results', ['testid' => $id, 'userid' => $student->userid, 'testnr' => $class->testnr + $student->offset])) {
+        !$DB->get_record('local_fitcheck_results', ['testid' => $id, 'userid' => $student->userid,
+            'testnr' => $class->testnr + $student->offset])) {
     $student = $DB->get_record('local_fitcheck_users', ['userid' => $USER->id]);
     $class = $DB->get_record('local_fitcheck_classes', ['id' => $student->classid]);
     $resulttoadd = new stdClass();

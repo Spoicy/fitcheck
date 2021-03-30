@@ -43,7 +43,7 @@ $deleteuser = optional_param('deleteuser', false, PARAM_BOOL);
 $deleteuserconfirm = optional_param('deleteuserconfirm', '', PARAM_ALPHANUM);
 
 $studentoptions = '';
-$endyearoptions = html_writer::tag('option', get_string('chooseendyear', 'local_fitcheck'), 
+$endyearoptions = html_writer::tag('option', get_string('chooseendyear', 'local_fitcheck'),
     ['value' => '', 'disabled' => '', 'selected' => '']);
 
 $loading = $OUTPUT->image_url("i/loading", "core");
@@ -136,7 +136,7 @@ $html = html_writer::div(
         ['class' => 'font-weight-bold text-center']), 'col-md-6') .
     html_writer::div(html_writer::tag('h4', get_string('studentstitle', 'local_fitcheck'),
         ['class' => 'font-weight-bold text-center']), 'col-md-6')
-    , 'row d-none d-md-flex') . 
+    , 'row d-none d-md-flex') .
     html_writer::div(
     html_writer::div(
         html_writer::div(

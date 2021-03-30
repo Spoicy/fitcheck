@@ -49,18 +49,18 @@ if ($data->pagemode == 0) {
     $unassignedsqlbase = 'FROM {user} u
         WHERE u.id NOT IN (SELECT userid FROM {local_fitcheck_users} WHERE classid IS NOT NULL)
         AND u.id != ' . $data->teacherid;
-    
+
     $alrassignedsql = "SELECT u.id, u.username, u.firstname, u.lastname FROM {user} u
         WHERE u.id NOT IN (SELECT u.id $unassignedsqlbase)" .
         " AND u.id NOT IN (SELECT u.id $assignedsqlbase) AND u.id != $data->teacherid";
     $assignedsql = "$selectbase $assignedsqlbase";
     $unassignedsql = "$selectbase $unassignedsqlbase";
-    
+
     // Prepare counts.
     $unassignedcount = 0;
     $assignedcount = 0;
     $alrassignedcount = 0;
-    
+
     // Display the select differently depending on if search is empty or not.
     if ($data->search != "") {
         // Differentiate between both selects.
