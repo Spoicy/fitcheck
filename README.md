@@ -1,7 +1,9 @@
 # FitCheck
 
-Installation
------------
+## Installation
+
+**This Plugin requires PHP >=7.2 and Moodle >=3.7 to guarantee functionality.**
+
 To install this Moodle plugin, clone the repository and place it into the "local" folder of your Moodle installation i.e. local/fitcheck. Upon reloading your Moodle website, it will begin the installation of the plugin.
 
 In order for teachers to access the teacher-specific pages, an additional system role has to be created:

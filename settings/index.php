@@ -43,7 +43,7 @@ if (has_capability('local/fitcheck:edittests', $PAGE->context)) {
             ['href' => new moodle_url('/local/fitcheck/settings/listtests.php')])) .
         html_writer::tag('li',
             html_writer::tag('a', html_writer::tag('h5', get_string('createnewtest', 'local_fitcheck')),
-            ['href' => new moodle_url('/local/fitcheck/settings/edittests.php?id=-1')]),
+            ['href' => new moodle_url('/local/fitcheck/settings/edittests.php?id=-1')])
         );
 }
 if (has_capability('local/fitcheck:editclasses', $PAGE->context)) {
@@ -52,7 +52,7 @@ if (has_capability('local/fitcheck:editclasses', $PAGE->context)) {
             ['href' => new moodle_url('/local/fitcheck/settings/listclasses.php')])) .
         html_writer::tag('li',
             html_writer::tag('a', html_writer::tag('h5', get_string('createnewclass', 'local_fitcheck')),
-            ['href' => new moodle_url('/local/fitcheck/settings/editclass.php?id=-1')]),
+            ['href' => new moodle_url('/local/fitcheck/settings/editclass.php?id=-1')])
         );
 }
 if (has_capability('local/fitcheck:deleteusers', $PAGE->context)) {

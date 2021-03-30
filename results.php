@@ -174,7 +174,7 @@ for ($i = 0; $i < $highest - $lowest + 1; $i++) {
 $testnamesheader = html_writer::tag('th',
     html_writer::div(get_string('grade', 'local_fitcheck'), 'gradetablecell'), ['class' => 'p-1 text-center']);
 $testgrades = '';
-$firsttestid = array_key_first($testidslabels);
+$firsttestid = array_keys($testidslabels)[0];
 foreach ($tests as $test) {
     if ($firsttestid == $test->id) {
         $testnamesheader .= html_writer::tag('td', html_writer::div($test->shortname, 'gradetablecell'),
@@ -227,7 +227,7 @@ for ($i = 6; $i >= 1; $i = $i - 0.5) {
 }
 
 // Create table and select.
-$tablecontent = html_writer::tag('tr', $testnamesheader, ) . $testgrades;
+$tablecontent = html_writer::tag('tr', $testnamesheader) . $testgrades;
 $gradetable = html_writer::tag('table', $tablecontent, ['class' => 'gradetable']);
 $gradeselect = html_writer::select(
     $testidslabels, 'gradeselect', $firsttestid, '',

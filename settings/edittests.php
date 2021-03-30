@@ -96,13 +96,18 @@ if ($testform->is_cancelled()) {
 } else if ($testnew = $testform->get_data()) {
     $testcreated = false;
     $testnew->id = $id;
-    $testsave = file_save_draft_area_files($testnew->video_filemanager, $PAGE->context->id,
-            'local_fitcheck', 'attachment', $testnew->id * 10 + 2,
-            array('maxbytes' => $CFG->maxbytes, 'maxfiles' => 2));
     if ($testnew->id == -1) {
         unset($testnew->id);
-        $testnew->id = local_fitcheck_create_test($testnew);
+        $testnewid = local_fitcheck_create_test($testnew);
+        $testnew->id = $testnewid;
+        $testsave = file_save_draft_area_files($testnew->video_filemanager, $PAGE->context->id,
+            'local_fitcheck', 'attachment', $testnew->id * 10 + 2,
+            array('maxbytes' => $CFG->maxbytes, 'maxfiles' => 2));
+        local_fitcheck_update_test($testnew);
     } else {
+        $testsave = file_save_draft_area_files($testnew->video_filemanager, $PAGE->context->id,
+            'local_fitcheck', 'attachment', $testnew->id * 10 + 2,
+            array('maxbytes' => $CFG->maxbytes, 'maxfiles' => 2));
         local_fitcheck_update_test($testnew);
     }
     redirect($returnurl);

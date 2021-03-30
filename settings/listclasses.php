@@ -91,8 +91,8 @@ switch ($sort) {
 }
 // If sorting by teacher, prepare classes SQL differently.
 if (isset($teachersort)) {
-    if (array_key_first($conditions) != 'status') {
-        $conditions = 'AND lfc.' . array_key_first($conditions) . ' = ' . $conditions[0];
+    if (array_keys($conditions)[0] != 'status') {
+        $conditions = 'AND lfc.' . array_keys($conditions)[0] . ' = ' . $conditions[0];
     } else {
         $conditions = '';
     }
@@ -109,7 +109,7 @@ foreach ($tableheaders as $tableheader) {
 }
 
 // Set page heading differently if in teacher view.
-if ((is_array($conditions) && array_key_first($conditions) != 'status')) {
+if ((is_array($conditions) && array_keys($conditions)[0] != 'status')) {
     $heading = html_writer::tag('h2', get_string('classamountforteacher', 'local_fitcheck', count($classes)));
     $teacher = get_string('listteacher', 'local_fitcheck');
 } else {

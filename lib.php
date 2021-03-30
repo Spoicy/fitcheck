@@ -59,6 +59,7 @@ function local_fitcheck_create_test($test) {
     $test = file_postupdate_standard_filemanager($test, 'video', $manageroptions, $context,
         'local_fitcheck', 'attachment', $test->id * 10 + 2);
     $DB->update_record('local_fitcheck_tests', $test);
+    return $testid;
 }
 
 /**
