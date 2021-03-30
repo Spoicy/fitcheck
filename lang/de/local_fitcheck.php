@@ -162,6 +162,7 @@ $string['viewclassresults'] = 'Klassenresultate anschauen';
 $string['viewstudentresults'] = 'Schülerresultate anschauen';
 $string['viewtest'] = 'Test anschauen';
 $string['wrongresult'] = 'Das eingereichte Resultat ist ungültig.';
+$string['settingspage'] = 'Zur Einstellungsseite';
 
 // Error strings.
 $string['notassignederror'] = 'Sie sind noch nicht zu einer Klasse zugewiesen.';

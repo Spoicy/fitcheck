@@ -141,6 +141,11 @@ if (!has_capability('local/fitcheck:edittests', $PAGE->context)) {
         html_writer::tag('a', get_string('gotoresultspage', 'local_fitcheck'),
             ['href' => new moodle_url('/local/fitcheck/results.php'), 'class' => 'btn btn-primary mb-3 btn-lg']),
         'd-flex justify-content-center');
+} else {
+    echo html_writer::div(
+        html_writer::tag('a', get_string('settingspage', 'local_fitcheck'),
+            ['href' => new moodle_url('/local/fitcheck/settings/'), 'class' => 'btn btn-primary mb-3 btn-lg']),
+        'd-flex justify-content-center');
 }
 echo $html;
 echo $OUTPUT->footer();

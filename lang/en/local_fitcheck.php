@@ -162,6 +162,7 @@ $string['viewclassresults'] = 'View class results';
 $string['viewstudentresults'] = 'View student results';
 $string['viewtest'] = 'View test';
 $string['wrongresult'] = 'The result you submitted is invalid.';
+$string['settingspage'] = 'View settings page';
 
 // Error strings.
 $string['notassignederror'] = 'You have not been assigned a class yet.';
