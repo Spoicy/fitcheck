@@ -4,7 +4,7 @@
 
 **This Plugin requires PHP >=7.2 and Moodle >=3.7 to guarantee functionality.**
 
-To install this Moodle plugin, clone the repository and place it into the "local" folder of your Moodle installation i.e. local/fitcheck. Upon reloading your Moodle website, it will begin the installation of the plugin.
+To install this Moodle plugin, clone the repository and place it into the "local" folder of your Moodle installation i.e. local/fitcheck. Upon reloading your Moodle website, it will begin the installation of the plugin. Alternatively, after cloning the repository you can remove the .git folder and put the plugin into a zipped folder with the name "local_fitcheck_moodle[moodle version]_[plugin version].zip", i.e. "local_fitcheck_moodle37_2021031100.zip", which you can then upload to moodle via the "Install plugins" page in the Site administration and continue the same installation process as previously mentioned.
 
 In order for teachers to access the teacher-specific pages, an additional system role has to be created:
 * Go to Site administration and go to the "Define roles" page under the "Users" section.
