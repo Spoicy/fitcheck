@@ -270,7 +270,7 @@ var myConfig = {
         values: '1:6:1'
     },
     scaleK: {
-        values: '1:8:1',
+        values: '1:" . count($tests) . ":1',
         labels: [" . $testnames . "],
         item: {
             fontColor: '#607D8B',
