@@ -39,7 +39,7 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('title', 'local_fitcheck') . ' - ' . get_string('classresults', 'local_fitcheck'));
 $PAGE->set_heading(get_string('title', 'local_fitcheck'));
-$PAGE->navbar->add('FitCheck');
+$PAGE->navbar->add('FitCheck', new moodle_url('/local/fitcheck'));
 $PAGE->navbar->add(get_string('classresults', 'local_fitcheck'));
 
 // Set direction for selected option.

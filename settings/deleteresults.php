@@ -142,7 +142,7 @@ $html = html_writer::div(
         html_writer::div(
             $selectendyears .
             html_writer::tag('button', get_string('deleteendyearresults', 'local_fitcheck'),
-                ['class' => 'btn btn-danger w-50 mt-2 mx-auto d-block', 'type' => 'submit',
+                ['class' => 'btn btn-danger w-50 mt-2 mx-auto d-block btn-deleteendyear', 'type' => 'submit',
                     'id' => 'deleteendyear', 'name' => 'deleteendyear', 'value' => 1, 'disabled' => ''])),
         'col-md-6 my-auto pb-4') .
     html_writer::div(

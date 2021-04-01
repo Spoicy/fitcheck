@@ -59,6 +59,7 @@ $loading = $OUTPUT->image_url("i/loading", "core");
 $PAGE->navbar->add($class->name, new moodle_url('/local/fitcheck/classresults.php', ['id' => $class->id]));
 $PAGE->navbar->add(fullname($studentinfo, true));
 $table = new html_table();
+$table->attributes['class'] = 'generaltable editresultstable';
 $table->head[] = ' ';
 foreach ($tests as $test) {
     $table->head[] = trim(mb_substr($test->shortname, 0, 5, 'utf-8'));

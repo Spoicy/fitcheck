@@ -56,7 +56,7 @@ $cards = '';
 $i = 0;
 $fs = get_file_storage();
 $filesmask = ['.png', '.jpg'];
-$placeholder = $OUTPUT->image_url('i/messagecontentimage', 'core');
+$placeholder = $OUTPUT->image_url('e/insert_edit_image', 'core');
 
 // Create cards for each test.
 foreach ($tests as $test) {
