@@ -216,7 +216,7 @@ function local_fitcheck_load_classform($class) {
         html_writer::div(
             html_writer::tag('select', $classoptgroup, [
                 'multiple' => 'multiple', 'class' => 'form-control',
-                'name' => 'assignedselect', 'id' => 'assignedselect', 'size' => '20', 'onchange' => 'enableAssigned()'])
+                'name' => 'assignedselect[]', 'id' => 'assignedselect', 'size' => '20', 'onchange' => 'enableAssigned()'])
         ) .
         html_writer::div(
             html_writer::label(get_string('search', 'local_fitcheck'), 'assignedselect_searchtext', true, ['class' => 'mr-1']) .
@@ -249,7 +249,7 @@ function local_fitcheck_load_classform($class) {
         html_writer::div(
             html_writer::tag('select', $availableoptgroup . $remainingoptgroup, [
                 'multiple' => 'multiple', 'class' => 'form-control',
-                'name' => 'unassignedselect', 'id' => 'unassignedselect', 'size' => '20', 'onChange' => 'enableUnassigned()'])
+                'name' => 'unassignedselect[]', 'id' => 'unassignedselect', 'size' => '20', 'onChange' => 'enableUnassigned()'])
         ) .
         html_writer::div(
             html_writer::label(get_string('search', 'local_fitcheck'), 'unassignedselect_searchtext', true, ['class' => 'mr-1']) .

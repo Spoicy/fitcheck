@@ -64,8 +64,8 @@ $classname = optional_param('classname', '', PARAM_TEXT);
 $classgender = optional_param('classgender', -1, PARAM_INT);
 $classagegroup = optional_param('classagegroup', '', PARAM_TEXT);
 $classendyear = optional_param('classendyear', -1, PARAM_INT);
-$unassignedstudentid = optional_param('unassignedselect', 0, PARAM_INT);
-$assignedstudentid = optional_param('assignedselect', 0, PARAM_INT);
+$unassignedstudentids = optional_param_array('unassignedselect', [], PARAM_INT);
+$assignedstudentids = optional_param_array('assignedselect', [], PARAM_INT);
 $agegrouperror = $agegroupclass = '';
 $endyearerror = $endyearclass = '';
 
@@ -115,41 +115,45 @@ if (optional_param('saveinfo', false, PARAM_BOOL) && $classname && $classgender 
 }
 
 // Add student to class.
-if (optional_param('add', false, PARAM_BOOL) && $unassignedstudentid && confirm_sesskey()) {
-    $student = $DB->get_record('local_fitcheck_users', ['userid' => $unassignedstudentid]);
-    if ($student) {
-        $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results}
-            WHERE userid = ?', [$student->userid]));
-        $student->classid = $id;
-        $student->offset = $numbertests - $class->testnr;
-        $DB->update_record('local_fitcheck_users', $student);
-    } else {
-        $student = new stdClass();
-        $student->classid = $id;
-        $student->userid = $unassignedstudentid;
-        $student->offset = -($class->testnr);
-        $DB->insert_record('local_fitcheck_users', $student);
+if (optional_param('add', false, PARAM_BOOL) && count($unassignedstudentids) && confirm_sesskey()) {
+    foreach ($unassignedstudentids as $studentid) {
+        $student = $DB->get_record('local_fitcheck_users', ['userid' => $studentid]);
+        if ($student) {
+            $numbertests = count($DB->get_records_sql('SELECT DISTINCT testnr FROM {local_fitcheck_results}
+                WHERE userid = ?', [$student->userid]));
+            $student->classid = $id;
+            $student->offset = $numbertests - $class->testnr;
+            $DB->update_record('local_fitcheck_users', $student);
+        } else {
+            $student = new stdClass();
+            $student->classid = $id;
+            $student->userid = $studentid;
+            $student->offset = -($class->testnr);
+            $DB->insert_record('local_fitcheck_users', $student);
+        }
     }
 }
 
 // Remove student from class.
-if (optional_param('remove', false, PARAM_BOOL) && $assignedstudentid && confirm_sesskey()) {
-    $student = $DB->get_record('local_fitcheck_users', ['userid' => $assignedstudentid]);
-    $student->classid = null;
-    $teststocheck = $DB->get_records('local_fitcheck_tests', ['gender' => $class->gender, 'status' => 1]);
-    foreach ($teststocheck as $test) {
-        $resulttocheck = $DB->get_record('local_fitcheck_results',
-            ['testnr' => $class->testnr + $student->offset, 'userid' => $student->userid, 'testid' => $test->id]);
-        if (!$resulttocheck && $class->testnr + $student->offset != 0) {
-            $newresult = new stdClass();
-            $newresult->result = null;
-            $newresult->testnr = $class->testnr + $student->offset;
-            $newresult->testid = $test->id;
-            $newresult->userid = $student->userid;
-            $DB->insert_record('local_fitcheck_results', $newresult);
+if (optional_param('remove', false, PARAM_BOOL) && count($assignedstudentids) && confirm_sesskey()) {
+    foreach ($assignedstudentids as $studentid) {
+        $student = $DB->get_record('local_fitcheck_users', ['userid' => $studentid]);
+        $student->classid = null;
+        $teststocheck = $DB->get_records('local_fitcheck_tests', ['gender' => $class->gender, 'status' => 1]);
+        foreach ($teststocheck as $test) {
+            $resulttocheck = $DB->get_record('local_fitcheck_results',
+                ['testnr' => $class->testnr + $student->offset, 'userid' => $student->userid, 'testid' => $test->id]);
+            if (!$resulttocheck && $class->testnr + $student->offset != 0) {
+                $newresult = new stdClass();
+                $newresult->result = null;
+                $newresult->testnr = $class->testnr + $student->offset;
+                $newresult->testid = $test->id;
+                $newresult->userid = $student->userid;
+                $DB->insert_record('local_fitcheck_results', $newresult);
+            }
         }
+        $DB->update_record('local_fitcheck_users', $student);
     }
-    $DB->update_record('local_fitcheck_users', $student);
 }
 
 if ($class->agegroup) {
