@@ -143,3 +143,10 @@ video.examplevideo {
         max-width: 600px;
     }
 }
+
+@supports (-webkit-touch-callout: none) {
+    #addcontrols {
+        margin-top: 0.2em;
+        margin-bottom: 2.6em;
+    }
+}
