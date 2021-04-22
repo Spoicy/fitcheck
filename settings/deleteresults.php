@@ -81,24 +81,37 @@ if ($deleteendyear || $deleteendyearconfirm) {
 } else if ($deleteuser || $deleteuserconfirm) {
     if ($deleteuserconfirm != md5($deleteuser)) {
         echo $OUTPUT->header();
-        $deleteusersselect = required_param('deleteusersselect', PARAM_INT);
-        $user = $DB->get_record('user', ['id' => $deleteusersselect]);
-        echo $OUTPUT->heading(get_string('confirmdeleteuser', 'local_fitcheck', fullname($user)));
+        $deleteusersselect = required_param_array('deleteusersselect', PARAM_INT);
+        $users = array();
+        $transstring = '';
+        foreach ($deleteusersselect as $deleteuserselect) {
+            $user = $DB->get_record('user', ['id' => $deleteuserselect]);
+            $users[] = $user;
+            $transstring .= '\'' . fullname($user) . '\', ';
+        } 
+        echo $OUTPUT->heading(get_string('confirmdeleteuser', 'local_fitcheck', substr($transstring, 0, strlen($transstring) - 2)));
         $optionsyes = array('deleteuser' => $deleteuser, 'deleteuserconfirm' => md5($deleteuser),
-            'sesskey' => sesskey(), 'deleteusersselect' => $deleteusersselect);
+            'sesskey' => sesskey(), 'deleteusersselect' => json_encode($deleteusersselect));
         $returnurl = new moodle_url('/local/fitcheck/settings/deleteresults.php');
         $deleteurl = new moodle_url($returnurl, $optionsyes);
-        $deletebutton = new single_button($deleteurl, get_string('deleteuserresults', 'local_fitcheck'), 'post');
+        if (count($deleteusersselect) > 1) {
+            $deletebutton = new single_button($deleteurl, get_string('deleteuserresultsplural', 'local_fitcheck'), 'post');
+        } else {
+            $deletebutton = new single_button($deleteurl, get_string('deleteuserresults', 'local_fitcheck'), 'post');
+        }
 
-        echo $OUTPUT->confirm(get_string('confirmdeleteuserfull', 'local_fitcheck', fullname($user)), $deletebutton, $returnurl);
+        echo $OUTPUT->confirm(get_string('confirmdeleteuserfull', 'local_fitcheck',
+            substr($transstring, 0, strlen($transstring) - 2)), $deletebutton, $returnurl);
         echo $OUTPUT->footer();
         die;
     } else {
-        $todelete = required_param('deleteusersselect', PARAM_INT);
-        $delete = $DB->delete_records('local_fitcheck_results', ['userid' => $todelete]);
-        $deletedstudent = $DB->get_record('local_fitcheck_users', ['userid' => $todelete]);
-        $deletedstudent->classid = null;
-        $DB->update_record('local_fitcheck_users', $deletedstudent);
+        $todelete = json_decode(required_param('deleteusersselect', PARAM_RAW));
+        foreach ($todelete as $user) {
+            $delete = $DB->delete_records('local_fitcheck_results', ['userid' => $user]);
+            $deletedstudent = $DB->get_record('local_fitcheck_users', ['userid' => $user]);
+            $deletedstudent->classid = null;
+            $DB->update_record('local_fitcheck_users', $deletedstudent);
+        }
     }
 }
 
@@ -129,7 +142,7 @@ $selectendyears = html_writer::tag('select', $endyearoptions,
         'name' => 'deleteendyearselect', 'onChange' => 'enableEndyear()']);
 $selectstudents = html_writer::tag('select', $studentoptions,
     ['multiple' => 'multiple', 'class' => 'form-control', 'id' => 'deleteusersselect',
-        'name' => 'deleteusersselect', 'size' => '15', 'onChange' => 'enableUser()']);
+        'name' => 'deleteusersselect[]', 'size' => '15', 'onChange' => 'enableUser()']);
 
 $html = html_writer::div(
     html_writer::div(html_writer::tag('h4', get_string('endyeartitle', 'local_fitcheck'),
