@@ -88,7 +88,7 @@ if ($deleteendyear || $deleteendyearconfirm) {
             $user = $DB->get_record('user', ['id' => $deleteuserselect]);
             $users[] = $user;
             $transstring .= '\'' . fullname($user) . '\', ';
-        } 
+        }
         echo $OUTPUT->heading(get_string('confirmdeleteuser', 'local_fitcheck', substr($transstring, 0, strlen($transstring) - 2)));
         $optionsyes = array('deleteuser' => $deleteuser, 'deleteuserconfirm' => md5($deleteuser),
             'sesskey' => sesskey(), 'deleteusersselect' => json_encode($deleteusersselect));
