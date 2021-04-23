@@ -130,6 +130,11 @@ $html .= html_writer::script('
     $(window).resize(function() {
         $(".thumbnail-empty").css("height", $(".thumbnail-real").height());
     });
+    $("button.nav-link").click(function() {
+        setTimeout(function() {
+            $(".thumbnail-empty").css("height", $(".thumbnail-real").height());
+        }, 500);
+    });
 ');
 
 // Output the page.
